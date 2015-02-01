@@ -228,7 +228,7 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
   //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
   //THE THIRD CHIME ARM 
-  modelMatrix.translate(-0.1, 0, -0.2);       // Make new drawing axes that
+  modelMatrix.translate(-0.1, -0, -0.2);       // Make new drawing axes that
               // we moved upwards (+y) measured in prev. drawing axes, and
               // moved rightwards (+x) by half the width of the box we just drew.
   
@@ -246,7 +246,33 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
               // we changed the DRAWING AXES used to draw it. Thus
               // we translate by the 0.1, not 0.1*0.6.)
   // DRAW BOX: Use this matrix to transform & draw our VBO's contents:
-  //COMMENTED OUT, SARA
+
+  gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
+  gl.drawArrays(gl.LINE_LOOP, 0, n/4);
+  gl.drawArrays(gl.LINE_LOOP, n/4, n/4); 
+  gl.drawArrays(gl.LINE_LOOP, n/2, n/4);
+  gl.drawArrays(gl.LINE_LOOP, 3*n/4, n/4);
+  //=======================================================
+
+  //THE FOURTH CHIME ARM 
+  modelMatrix.translate(0.4, 0, -0.9);       // Make new drawing axes that
+              // we moved upwards (+y) measured in prev. drawing axes, and
+              // moved rightwards (+x) by half the width of the box we just drew.
+  
+//make this one a little thinner in z 
+
+  modelMatrix.scale(1.5, 0.7, 2);       // Make new drawing axes that
+              // are smaller that the previous drawing axes by 0.6.
+  modelMatrix.rotate(0, 0.5, 0,0);  // Make new drawing axes that
+              // spin around Z axis (0,0,1) of the previous drawing 
+              // axes, using the same origin.
+       // Make new drawing axes that
+              // move sideways by half the width of our rectangle model
+              // (REMEMBER! modelMatrix.scale() DIDN'T change the 
+              // the vertices of our model stored in our VBO; instead
+              // we changed the DRAWING AXES used to draw it. Thus
+              // we translate by the 0.1, not 0.1*0.6.)
+  // DRAW BOX: Use this matrix to transform & draw our VBO's contents:
   gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
   gl.drawArrays(gl.LINE_LOOP, 0, n/4);
   gl.drawArrays(gl.LINE_LOOP, n/4, n/4); 
@@ -255,8 +281,7 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
   //=======================================================
 
 
-  modelMatrix.translate(0, 0, 0.0); // Make new drawing axes at 
-              // the robot's "wrist" -- at the center top of upper arm
+
   
   // SAVE CURRENT DRAWING AXES HERE--------------------------
   //  copy current matrix so that we can return to these same drawing axes
