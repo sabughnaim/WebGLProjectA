@@ -34,7 +34,7 @@ var VSHADER_SOURCE =
 // Fragment shader program----------------------------------
 var FSHADER_SOURCE =
   'void main() {\n' +
-  '  gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);\n' +
+  '  gl_FragColor = vec4(1.0, 0.0, 1.0, 1.0);\n' +
   '}\n';
 //  Each instance computes all the on-screen attributes for just one PIXEL.
 // here we do the bare minimum: if we draw any part of any drawing primitive in 
@@ -98,28 +98,35 @@ function main() {
 function initVertexBuffers(gl) {
 //==============================================================================
   var vertices = new Float32Array ([
+     //first, make the original primitive
+     //make copies of it, translated and rotated
+    //inside triangle 
      0.00, 0.00, 0.00, 1.00,    
      0.50, 0.00, 0.00, 1.00,  
-     0.50, 0.20, 0.00, 1.00,
-     0.00, 0.20, 0.00, 1.00,
-     
-     0.00, 0.00, 0.20, 1.00,    
+     0.25, -0.60, 0.00, 1.00,
+     0.00, 0.00, 0.00, 1.00,
+  
+    //outside triangle
      0.50, 0.00, 0.20, 1.00,  
-     0.50, 0.20, 0.20, 1.00,
-     0.00, 0.20, 0.20, 1.00,
+     0.25, -0.60, 0.00, 1.00,
+     0.00, 0.00, 0.20, 1.00,
+     0.20, 0.00, 0.20, 1.00,
      
-     0.00, 0.00, 0.00, 1.00,    
-     0.00, 0.00, 0.20, 1.00,  
-     0.00, 0.20, 0.20, 1.00,
-     0.00, 0.20, 0.00, 1.00,
-     
-     0.50, 0.00, 0.00, 1.00,    
-     0.50, 0.00, 0.20, 1.00,  
-     0.50, 0.20, 0.20, 1.00,
-     0.50, 0.20, 0.00, 1.00,
+     0.0, 0.00, 0.00, 1.00,    
+     0.25, 0.2, 0.00, 1.00, //top tip of top cone   
+     0.5, 0.0, 0.0, 1.00, //return to base 
+     0.5, 0.0, 0.2, 1.00,
     
+    //tryina get this top part of the cone right
+     0.0, 0.0, 0.20, 1.00,
+     0.25, 0.2, 0.00, 1.00,
+     0.25, 0.2, 0.00, 1.00,
+     0.5, 0.0, 0.2, 1.0,
+     
+     0.0, 0.0, 0.00, 1.00,
+
   ]);
-  var n = 16;   // The number of vertices
+  var n = 18;   // The number of vertices
 
   // Create a buffer object
   var vertexBuffer = gl.createBuffer();
@@ -199,7 +206,8 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
               // we changed the DRAWING AXES used to draw it. Thus
               // we translate by the 0.1, not 0.1*0.6.)
   // DRAW BOX: Use this matrix to transform & draw our VBO's contents:
-  gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
+  //COMMENTED OUT, SARA
+  //gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
   gl.drawArrays(gl.LINE_LOOP, 0, n/4);
   gl.drawArrays(gl.LINE_LOOP, n/4, n/4); 
   gl.drawArrays(gl.LINE_LOOP, n/2, n/4);
@@ -239,7 +247,7 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
             //  left corner at the wrist-point; no change needed.)
   // Draw inner lower jaw segment:        
   // DRAW BOX: Use this matrix to transform & draw our VBO's contents:
-  gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
+  //gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
   gl.drawArrays(gl.LINE_LOOP, 0, n/4);
   gl.drawArrays(gl.LINE_LOOP, n/4, n/4); 
   gl.drawArrays(gl.LINE_LOOP, n/2, n/4);
@@ -252,7 +260,8 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
    
   // Draw outer lower jaw segment:        
   // DRAW BOX: Use this matrix to transform & draw our VBO's contents:
-  gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
+  //COMMENTED OUT, SARA
+  //gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
   gl.drawArrays(gl.LINE_LOOP, 0, n/4);
   gl.drawArrays(gl.LINE_LOOP, n/4, n/4); 
   gl.drawArrays(gl.LINE_LOOP, n/2, n/4);
@@ -275,7 +284,8 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
   
   // Draw inner upper jaw segment:        (same as for lower jaw)
   // DRAW BOX: Use this matrix to transform & draw our VBO's contents:
-  gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
+  //COMMENTED OUT, SARA
+  //gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
   gl.drawArrays(gl.LINE_LOOP, 0, n/4);
   gl.drawArrays(gl.LINE_LOOP, n/4, n/4); 
   gl.drawArrays(gl.LINE_LOOP, n/2, n/4);
@@ -289,7 +299,8 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
    
   // Draw outer upper jaw segment:    (same as for lower jaw)   
   // DRAW BOX: Use this matrix to transform & draw our VBO's contents:
-  gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
+  //COMMENTED OUT 
+  //gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
   gl.drawArrays(gl.LINE_LOOP, 0, n/4);
   gl.drawArrays(gl.LINE_LOOP, n/4, n/4); 
   gl.drawArrays(gl.LINE_LOOP, n/2, n/4);
@@ -308,8 +319,8 @@ function animate(angle) {
   
   // Update the current rotation angle (adjusted by the elapsed time)
   //  limit the angle to move smoothly between +20 and -85 degrees:
-  if(angle >   20.0 && ANGLE_STEP > 0) ANGLE_STEP = -ANGLE_STEP;
-  if(angle <  -85.0 && ANGLE_STEP < 0) ANGLE_STEP = -ANGLE_STEP;
+  if(angle >   .0 && ANGLE_STEP > 0) ANGLE_STEP = -ANGLE_STEP;
+  if(angle <  360.0 && ANGLE_STEP < 0) ANGLE_STEP = -ANGLE_STEP;
   
   var newAngle = angle + (ANGLE_STEP * elapsed) / 1000.0;
   return newAngle %= 360;
