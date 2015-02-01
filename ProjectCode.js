@@ -127,7 +127,7 @@ function initVertexBuffers(gl) {
      0.0, 0.0, 0.20, 1.00,
      0.25, 0.2, 0.00, 1.00,
      0.25, 0.2, 0.00, 1.00,
-     0.5, 0.0, 0.2, 1.0,
+     0.5, 0.0, 0.2, 1.00,
      
      0.0, 0.0, 0.00, 1.00,
 
@@ -171,6 +171,9 @@ function initVertexBuffers(gl) {
   return n;
 }
 
+
+//YO THIS IS the whole drawing axes 
+
 function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
 //==============================================================================
   // Clear <canvas>
@@ -185,7 +188,7 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
   modelMatrix.rotate(currentAngle, 1, 0, 0);  // Make new drawing axes that
               // that spin around z axis (0,0,1) of the previous 
               // drawing axes, using the same origin.
-  modelMatrix.translate( -0.5, 0,0);            // Move box so that we pivot
+  modelMatrix.translate( -0.3, 0,0);            // Move box so that we pivot
               // around the MIDDLE of it's lower edge, and not the left corner.
   // DRAW BOX:  Use this matrix to transform & draw our VBo's contents:
       // Pass our current matrix to the vertex shaders:
@@ -197,12 +200,16 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
   gl.drawArrays(gl.LINE_LOOP, 3*n/4, n/4);  
 
 
-  modelMatrix.translate(-0.2, 0, 0);       // Make new drawing axes that
+//THE SECOND CHIME ARM 
+  modelMatrix.translate(-0.05, 0, 0.2);       // Make new drawing axes that
               // we moved upwards (+y) measured in prev. drawing axes, and
               // moved rightwards (+x) by half the width of the box we just drew.
-  modelMatrix.scale(0.5,0.5,0.5);       // Make new drawing axes that
+  
+  //want to elongate this chime arm
+
+  modelMatrix.scale(0.5,0.9,0.5);       // Make new drawing axes that
               // are smaller that the previous drawing axes by 0.6.
-  modelMatrix.rotate(currentAngle*0.2, 0,1,0);  // Make new drawing axes that
+  modelMatrix.rotate(0, 0,1,0);  // Make new drawing axes that
               // spin around Z axis (0,0,1) of the previous drawing 
               // axes, using the same origin.
   modelMatrix.translate(-0.5, 0, 0);      // Make new drawing axes that
@@ -218,7 +225,35 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
   gl.drawArrays(gl.LINE_LOOP, n/4, n/4); 
   gl.drawArrays(gl.LINE_LOOP, n/2, n/4);
   gl.drawArrays(gl.LINE_LOOP, 3*n/4, n/4);
- 
+  //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+  //THE THIRD CHIME ARM 
+  modelMatrix.translate(-0.1, 0, -0.2);       // Make new drawing axes that
+              // we moved upwards (+y) measured in prev. drawing axes, and
+              // moved rightwards (+x) by half the width of the box we just drew.
+  
+//make this one a little thinner in z 
+
+  modelMatrix.scale(1,1,0.5);       // Make new drawing axes that
+              // are smaller that the previous drawing axes by 0.6.
+  modelMatrix.rotate(0, 0.5, 0,0);  // Make new drawing axes that
+              // spin around Z axis (0,0,1) of the previous drawing 
+              // axes, using the same origin.
+  modelMatrix.translate(-0.5, 0, 0);      // Make new drawing axes that
+              // move sideways by half the width of our rectangle model
+              // (REMEMBER! modelMatrix.scale() DIDN'T change the 
+              // the vertices of our model stored in our VBO; instead
+              // we changed the DRAWING AXES used to draw it. Thus
+              // we translate by the 0.1, not 0.1*0.6.)
+  // DRAW BOX: Use this matrix to transform & draw our VBO's contents:
+  //COMMENTED OUT, SARA
+  gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
+  gl.drawArrays(gl.LINE_LOOP, 0, n/4);
+  gl.drawArrays(gl.LINE_LOOP, n/4, n/4); 
+  gl.drawArrays(gl.LINE_LOOP, n/2, n/4);
+  gl.drawArrays(gl.LINE_LOOP, 3*n/4, n/4);
+  //=======================================================
+
 
   modelMatrix.translate(0, 0, 0.0); // Make new drawing axes at 
               // the robot's "wrist" -- at the center top of upper arm
@@ -231,86 +266,7 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
   // the upper pincer.
   //----------------------------------------------------------
   pushMatrix(modelMatrix);
-  //-----------------------------------------------------------
-  // CAUTION!  Instead of our textbook's matrix library 
-  //  (WebGL Programming Guide:  
-  //
-  //        lib/cuon-matrix.js
-  //
-  // be sure your HTML file loads this MODIFIED matrix library:
-  //
-  //        cuon-matrix-mod.js
-  // where Adrien Katsuya Tateno (your diligent classmate in EECS351)
-  // has added push-down matrix-stack functions 'push' and 'pop'.
-  //--------------------------------------------------------------
-
-  //=========Draw lower jaw of robot pincer============================
-  modelMatrix.rotate(-25.0 +0.5* currentAngle, 0,1,0);    
-            // make new drawing axes that rotate for lower-jaw
-  modelMatrix.scale(0.4, 0.4, 0.4);   // Make new drawing axes that
-            // have size of just 40% of previous drawing axes,
-            // (Then translate? no need--we already have the box's 
-            //  left corner at the wrist-point; no change needed.)
-  // Draw inner lower jaw segment:        
-  // DRAW BOX: Use this matrix to transform & draw our VBO's contents:
-  //gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
-  gl.drawArrays(gl.LINE_LOOP, 0, n/4);
-  gl.drawArrays(gl.LINE_LOOP, n/4, n/4); 
-  gl.drawArrays(gl.LINE_LOOP, n/2, n/4);
-  gl.drawArrays(gl.LINE_LOOP, 3*n/4, n/4);
-
-  // Now move drawing axes to the centered end of that lower-jaw segment:
-  modelMatrix.translate(0, 0, 0.0);
-  modelMatrix.rotate(40.0, 0,1,0);    // make bend in the lower jaw
-  modelMatrix.translate(-0.5, 0, 0.0);  // re-center the outer segment,
-   
-  // Draw outer lower jaw segment:        
-  // DRAW BOX: Use this matrix to transform & draw our VBO's contents:
-  //COMMENTED OUT, SARA
-  //gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
-  gl.drawArrays(gl.LINE_LOOP, 0, n/4);
-  gl.drawArrays(gl.LINE_LOOP, n/4, n/4); 
-  gl.drawArrays(gl.LINE_LOOP, n/2, n/4);
-  gl.drawArrays(gl.LINE_LOOP, 3*n/4, n/4);
-  
-  // RETURN to the saved drawing axes at the 'wrist':
-  // RETRIEVE PREVIOUSLY-SAVED DRAWING AXES HERE:
-  //---------------------
   modelMatrix = popMatrix();
-  //----------------------
-  
-  //=========Draw lower jaw of robot pincer============================
-  // (almost identical to the way I drew the upper jaw)
-  modelMatrix.rotate(25.0 -0.5* currentAngle, 0,1,0);   
-            // make new drawing axes that rotate upper jaw symmetrically
-            // with lower jaw: changed sign of 15.0 and of 0.5
-  modelMatrix.scale(0.4, 0.4, 0.4);   // Make new drawing axes that
-            // have size of just 40% of previous drawing axes,
-  modelMatrix.translate(-0.6, 0, 0);  // move box LEFT corner at wrist-point.
-  
-  // Draw inner upper jaw segment:        (same as for lower jaw)
-  // DRAW BOX: Use this matrix to transform & draw our VBO's contents:
-  //COMMENTED OUT, SARA
-  //gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
-  gl.drawArrays(gl.LINE_LOOP, 0, n/4);
-  gl.drawArrays(gl.LINE_LOOP, n/4, n/4); 
-  gl.drawArrays(gl.LINE_LOOP, n/2, n/4);
-  gl.drawArrays(gl.LINE_LOOP, 3*n/4, n/4);
-
-  // Now move drawing axes to the centered end of that upper-jaw segment:
-  modelMatrix.translate(0, 0, 0.0);
-  modelMatrix.rotate(-40.0, 0,1,0);   // make bend in the upper jaw that
-                                      // is opposite of lower jaw (+/-40.0)
-  modelMatrix.translate(-0.5, 0, 0.0);  // re-center the outer segment,
-   
-  // Draw outer upper jaw segment:    (same as for lower jaw)   
-  // DRAW BOX: Use this matrix to transform & draw our VBO's contents:
-  //COMMENTED OUT 
-  //gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
-  gl.drawArrays(gl.LINE_LOOP, 0, n/4);
-  gl.drawArrays(gl.LINE_LOOP, n/4, n/4); 
-  gl.drawArrays(gl.LINE_LOOP, n/2, n/4);
-  gl.drawArrays(gl.LINE_LOOP, 3*n/4, n/4);
 }
 
 // Last time that this function was called:  (used for animation timing)
