@@ -1,8 +1,15 @@
+//SARA ABU-GHNAIM
+//PROJECT A 
+
+//hopefully a wndchime 
+
+//plan
+     //first, make the original primitive (DONE)
+     //make copies of it, translated and rotated
+
+
 //3456789_123456789_123456789_123456789_123456789_123456789_123456789_123456789_
-// (JT: why the numbers? counts columns, helps me keep 80-char-wide listings)
-//
-// RotatingTranslatedTriangle.js (c) 2012 matsuda
-//
+
 // RotatingTranslatedTriangleJT.js  MODIFIED for EECS 351-1, 
 //                  Northwestern Univ. Jack Tumblin
 //    (converted to 2D->4D; 3 verts --> 6 verts, 2 triangles arranged as long 
@@ -98,8 +105,7 @@ function main() {
 function initVertexBuffers(gl) {
 //==============================================================================
   var vertices = new Float32Array ([
-     //first, make the original primitive
-     //make copies of it, translated and rotated
+
     //inside triangle 
      0.00, 0.00, 0.00, 1.00,    
      0.50, 0.00, 0.00, 1.00,  
@@ -190,13 +196,13 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
   gl.drawArrays(gl.LINE_LOOP, n/2, n/4);
   gl.drawArrays(gl.LINE_LOOP, 3*n/4, n/4);  
 
-  //-------Draw Upper Arm----------------
-  modelMatrix.translate(0, 0, 0);       // Make new drawing axes that
+
+  modelMatrix.translate(-0.2, 0, 0);       // Make new drawing axes that
               // we moved upwards (+y) measured in prev. drawing axes, and
               // moved rightwards (+x) by half the width of the box we just drew.
-  modelMatrix.scale(0.6,0.6,0.6);       // Make new drawing axes that
+  modelMatrix.scale(0.5,0.5,0.5);       // Make new drawing axes that
               // are smaller that the previous drawing axes by 0.6.
-  modelMatrix.rotate(currentAngle*0.8, 0,1,0);  // Make new drawing axes that
+  modelMatrix.rotate(currentAngle*0.2, 0,1,0);  // Make new drawing axes that
               // spin around Z axis (0,0,1) of the previous drawing 
               // axes, using the same origin.
   modelMatrix.translate(-0.5, 0, 0);      // Make new drawing axes that
@@ -207,7 +213,7 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
               // we translate by the 0.1, not 0.1*0.6.)
   // DRAW BOX: Use this matrix to transform & draw our VBO's contents:
   //COMMENTED OUT, SARA
-  //gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
+  gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
   gl.drawArrays(gl.LINE_LOOP, 0, n/4);
   gl.drawArrays(gl.LINE_LOOP, n/4, n/4); 
   gl.drawArrays(gl.LINE_LOOP, n/2, n/4);
