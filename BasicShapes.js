@@ -583,7 +583,7 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
   																				// to match WebGL display canvas.
   modelMatrix.scale(0.2, 0.2, 0.2);
   						// if you DON'T scale, cyl goes outside the CVV; clipped!
-  modelMatrix.rotate(currentAngle, 1, 0, 0);  // spin around y axis.
+  modelMatrix.rotate(currentAngle, 0, 1, 0);  // spin around y axis.
 	// Drawing:
   // Pass our current matrix to the vertex shaders:
   gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);

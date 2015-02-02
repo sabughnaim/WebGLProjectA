@@ -1,17 +1,24 @@
 //SARA ABU-GHNAIM
 //PROJECT A 
 
-//hopefully a wndchime 
+//HOPEFULLY  A WINDCHIME
+
+//a) Draw several moving, turning, jointed colored shapes with openGL’s basic drawing primitives
+//(various forms of points, lines and triangles, etc.) using vertex buffer objects full of 3D vertex attributes. b) Use a glModelView-like matrix stack to transform those shapes them interactively,
+//c) Ensure that parts of your on-screen image move continuously without user input (animation) and
+//d) Make some parts of at least one jointed object move smoothly in response to keyboard and mouse inputs.
 
 //plan
      //first, make the original primitive (DONE)
-     //make copies of it, translated and rotated
+     //make copies of it, translated and rotated (DONE)
+     //make it stop with html button (DONE)
+     //fill in the colors, make it solid from wireframe
+     //then make a string to hang them from string
 
 
 //3456789_123456789_123456789_123456789_123456789_123456789_123456789_123456789_
 
-// RotatingTranslatedTriangleJT.js  MODIFIED for EECS 351-1, 
-//                  Northwestern Univ. Jack Tumblin
+
 //    (converted to 2D->4D; 3 verts --> 6 verts, 2 triangles arranged as long 
 //    (rectangle with small gap fills one single Vertex Buffer Object (VBO);
 //    (draw same rectangle over and over, but with different matrix tranforms
@@ -119,20 +126,24 @@ function initVertexBuffers(gl) {
      0.20, 0.00, 0.20, 1.00,
      
      0.0, 0.00, 0.00, 1.00,    
-     0.25, 0.2, 0.00, 1.00, //top tip of top cone   
+     0.25, 0.2, 0.1, 1.00, //top tip of top cone   
      0.5, 0.0, 0.0, 1.00, //return to base 
      0.5, 0.0, 0.2, 1.00,
     
     //tryina get this top part of the cone right
      0.0, 0.0, 0.20, 1.00,
-     0.25, 0.2, 0.00, 1.00,
-     0.25, 0.2, 0.00, 1.00,
+     0.25, 0.2, 0.1, 1.00,
+     0.25, 0.2, 0.1, 1.00,
      0.5, 0.0, 0.2, 1.00,
+
+     0.5, 0.4, 0.0, 1.00,
      
-     0.0, 0.0, 0.00, 1.00,
+     //0.0, 0.0, 0.00, 1.00,
+
+
 
   ]);
-  var n = 18;   // The number of vertices
+  var n = 17;   // The number of vertices
 
   // Create a buffer object
   var vertexBuffer = gl.createBuffer();
@@ -181,11 +192,11 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
 
   // Build our Robot Arm by successively moving our drawing axes
   //-------Draw Lower Arm---------------
-  modelMatrix.setTranslate(0.6,0, 0);  // 'set' means DISCARD old matrix,
+  modelMatrix.setTranslate(0.2, 0.2, 0);  // 'set' means DISCARD old matrix,
               // (drawing axes centered in CVV), and then make new
               // drawing axes moved to the lower-left corner of CVV. 
   
-  modelMatrix.rotate(currentAngle, 1, 0, 0);  // Make new drawing axes that
+  modelMatrix.rotate(currentAngle, 1, 1, 0);  // Make new drawing axes that
               // that spin around z axis (0,0,1) of the previous 
               // drawing axes, using the same origin.
   modelMatrix.translate( -0.3, 0,0);            // Move box so that we pivot
@@ -201,7 +212,7 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
 
 
 //THE SECOND CHIME ARM 
-  modelMatrix.translate(-0.05, 0, 0.2);       // Make new drawing axes that
+  modelMatrix.translate(0, 0, 0.2);       // Make new drawing axes that
               // we moved upwards (+y) measured in prev. drawing axes, and
               // moved rightwards (+x) by half the width of the box we just drew.
   
@@ -209,7 +220,7 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
 
   modelMatrix.scale(0.5,0.9,0.5);       // Make new drawing axes that
               // are smaller that the previous drawing axes by 0.6.
-  modelMatrix.rotate(0, 0,1,0);  // Make new drawing axes that
+  modelMatrix.rotate(1, 1,1,0);  // Make new drawing axes that
               // spin around Z axis (0,0,1) of the previous drawing 
               // axes, using the same origin.
   modelMatrix.translate(-0.5, 0, 0);      // Make new drawing axes that
@@ -236,10 +247,10 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
 
   modelMatrix.scale(1,1,0.5);       // Make new drawing axes that
               // are smaller that the previous drawing axes by 0.6.
-  modelMatrix.rotate(0, 0.5, 0,0);  // Make new drawing axes that
+  modelMatrix.rotate(1, 1, 1,0);  // Make new drawing axes that
               // spin around Z axis (0,0,1) of the previous drawing 
               // axes, using the same origin.
-  modelMatrix.translate(-0.5, 0, 0);      // Make new drawing axes that
+  modelMatrix.translate(-0.3, 0, -0.1);      // Make new drawing axes that
               // move sideways by half the width of our rectangle model
               // (REMEMBER! modelMatrix.scale() DIDN'T change the 
               // the vertices of our model stored in our VBO; instead
@@ -255,7 +266,7 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
   //=======================================================
 
   //THE FOURTH CHIME ARM 
-  modelMatrix.translate(0.4, 0, -0.9);       // Make new drawing axes that
+  modelMatrix.translate(0.15, 0, -0.7);       // Make new drawing axes that
               // we moved upwards (+y) measured in prev. drawing axes, and
               // moved rightwards (+x) by half the width of the box we just drew.
   
@@ -322,4 +333,15 @@ function moreCCW() {
 function lessCCW() {
 //==============================================================================
   ANGLE_STEP -= 10; 
+}
+
+//HTML BUTTONS
+function runStop() {
+  if(ANGLE_STEP*ANGLE_STEP > 1) {
+    myTmp = ANGLE_STEP;
+    ANGLE_STEP = 0;
+  }
+  else {
+    ANGLE_STEP = myTmp;
+  }
 }

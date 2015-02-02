@@ -10,11 +10,14 @@
     Please use a browser that supports "canvas"
     </canvas>
     <p>
-      <button type="button" onclick="moreCCW()">++ CCW</button>
-      <button type="button" onclick="lessCCW()">-- CCW</button>
-		<! these commands create a push-button withlabels ++ CCW and -- CCW.
-			When users click the button, call the function name held in 'onclick'>
+      <button type="button" onclick="moreCCW()">Faster</button>
+      <button type="button" onclick="lessCCW()">Slower</button>
+      <button type="button" onclick="runStop()">Run/Stop</button>
+
     </p>
+    <div id='Mouse'> Mouse Drag totals (CVV coords) </div>
+      <button type="button" onClick='clearDrag()'>Clear</button>
+  <p>
     <script src="../lib/webgl-utils.js"></script>
     <script src="../lib/webgl-debug.js"></script>
     <script src="../lib/cuon-utils.js"></script>
