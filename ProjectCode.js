@@ -14,6 +14,7 @@
      //make it stop with html button (DONE)
      //fill in the colors, make it solid from wireframe
      //then make a string to hang them from string
+     //NED TO CHANGE MY DRAWING PRIMITIVES TO TRIANGLE or TRIANGLE_STRIP 
 
 
 //3456789_123456789_123456789_123456789_123456789_123456789_123456789_123456789_
@@ -136,14 +137,15 @@ function initVertexBuffers(gl) {
      0.25, 0.2, 0.1, 1.00,
      0.5, 0.0, 0.2, 1.00,
 
-     0.5, 0.4, 0.0, 1.00,
+     //add a line as a different primitive, as line, and hang it as string 
+     
      
      //0.0, 0.0, 0.00, 1.00,
 
 
 
   ]);
-  var n = 17;   // The number of vertices
+  var n = 16;   // The number of vertices
 
   // Create a buffer object
   var vertexBuffer = gl.createBuffer();
@@ -200,7 +202,9 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
               // that spin around z axis (0,0,1) of the previous 
               // drawing axes, using the same origin.
   modelMatrix.translate( -0.3, 0,0);            // Move box so that we pivot
-              // around the MIDDLE of it's lower edge, and not the left corner.
+            // around the MIDDLE of it's lower edge, and not the left corner.
+
+  pushMatrix(modelMatrix);  
   // DRAW BOX:  Use this matrix to transform & draw our VBo's contents:
       // Pass our current matrix to the vertex shaders:
   gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
@@ -210,6 +214,7 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
   gl.drawArrays(gl.LINE_LOOP, n/2, n/4);
   gl.drawArrays(gl.LINE_LOOP, 3*n/4, n/4);  
 
+  modelMatrix = popMatrix();  
 
 //THE SECOND CHIME ARM 
   modelMatrix.translate(0, 0, 0.2);       // Make new drawing axes that
@@ -220,7 +225,7 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
 
   modelMatrix.scale(0.5,0.9,0.5);       // Make new drawing axes that
               // are smaller that the previous drawing axes by 0.6.
-  modelMatrix.rotate(1, 1,1,0);  // Make new drawing axes that
+  modelMatrix.rotate(currentAngle, 1, currentAngle, 0);  // Make new drawing axes that
               // spin around Z axis (0,0,1) of the previous drawing 
               // axes, using the same origin.
   modelMatrix.translate(-0.5, 0, 0);      // Make new drawing axes that
@@ -237,7 +242,8 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
   gl.drawArrays(gl.LINE_LOOP, n/2, n/4);
   gl.drawArrays(gl.LINE_LOOP, 3*n/4, n/4);
   //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
+  pushMatrix(modelMatrix);
+  modelMatrix = popMatrix();
   //THE THIRD CHIME ARM 
   modelMatrix.translate(-0.1, -0, -0.2);       // Make new drawing axes that
               // we moved upwards (+y) measured in prev. drawing axes, and
@@ -247,7 +253,7 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
 
   modelMatrix.scale(1,1,0.5);       // Make new drawing axes that
               // are smaller that the previous drawing axes by 0.6.
-  modelMatrix.rotate(1, 1, 1,0);  // Make new drawing axes that
+  modelMatrix.rotate(currentAngle, 1, currentAngle, 0);  // Make new drawing axes that
               // spin around Z axis (0,0,1) of the previous drawing 
               // axes, using the same origin.
   modelMatrix.translate(-0.3, 0, -0.1);      // Make new drawing axes that
@@ -264,9 +270,10 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
   gl.drawArrays(gl.LINE_LOOP, n/2, n/4);
   gl.drawArrays(gl.LINE_LOOP, 3*n/4, n/4);
   //=======================================================
-
+  pushMatrix(modelMatrix);
+  modelMatrix = popMatrix();
   //THE FOURTH CHIME ARM 
-  modelMatrix.translate(0.15, 0, -0.7);       // Make new drawing axes that
+  modelMatrix.translate(0.15, 0, -0.2);       // Make new drawing axes that
               // we moved upwards (+y) measured in prev. drawing axes, and
               // moved rightwards (+x) by half the width of the box we just drew.
   
@@ -274,7 +281,7 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
 
   modelMatrix.scale(1.5, 0.7, 2);       // Make new drawing axes that
               // are smaller that the previous drawing axes by 0.6.
-  modelMatrix.rotate(0, 0.5, 0,0);  // Make new drawing axes that
+  modelMatrix.rotate(currentAngle, 1, currentAngle, 0);  // Make new drawing axes that
               // spin around Z axis (0,0,1) of the previous drawing 
               // axes, using the same origin.
        // Make new drawing axes that
@@ -291,7 +298,10 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
   gl.drawArrays(gl.LINE_LOOP, 3*n/4, n/4);
   //=======================================================
 
-
+  //CLICK AND DRAG WONT WORK 
+  //var dist = Math.sqrt(xMdragTot*xMdragTot + yMdragTot*yMdragTot);
+  //modelMatrix.rotate(dist*120.0, -yMdragTot+0.0001, xMdragTot+0.0001, 0.0);
+      
 
   
   // SAVE CURRENT DRAWING AXES HERE--------------------------
@@ -303,6 +313,8 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
   //----------------------------------------------------------
   pushMatrix(modelMatrix);
   modelMatrix = popMatrix();
+
+
 }
 
 // Last time that this function was called:  (used for animation timing)
