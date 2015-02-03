@@ -138,7 +138,8 @@ function initVertexBuffers(gl) {
      0.5, 0.0, 0.2, 1.00,
 
      //add a line as a different primitive, as line, and hang it as string 
-     
+     //would that require a different vertices var?
+     //maybe, because the var name is used 
      
      //0.0, 0.0, 0.00, 1.00,
 
