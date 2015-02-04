@@ -17,14 +17,15 @@
      //NED TO CHANGE MY DRAWING PRIMITIVES TO TRIANGLE or TRIANGLE_STRIP 
 
 
-//3456789_123456789_123456789_123456789_123456789_123456789_123456789_123456789_
+
+     //add a line as a different primitive, as line, and hang it as string 
+     //would that require a different vertices var?
+     //maybe, because the var name is used 
+     
+     //FIND A WAY TO ROTATE EACH ON ITS OWN AXIS, then on a global axis 
+     //need to pay mind 
 
 
-//    (converted to 2D->4D; 3 verts --> 6 verts, 2 triangles arranged as long 
-//    (rectangle with small gap fills one single Vertex Buffer Object (VBO);
-//    (draw same rectangle over and over, but with different matrix tranforms
-//    (found from a tree of transformations to construct a jointed 'robot arm'
-//
 
 // Vertex shader program----------------------------------
 var VSHADER_SOURCE =
@@ -119,35 +120,23 @@ function initVertexBuffers(gl) {
      0.50, 0.00, 0.00, 1.00,  
      0.25, -0.60, 0.00, 1.00,
      0.00, 0.00, 0.00, 1.00,
-  
-    //outside triangle
+
      0.50, 0.00, 0.20, 1.00,  
      0.25, -0.60, 0.00, 1.00,
      0.00, 0.00, 0.20, 1.00,
-     0.20, 0.00, 0.20, 1.00,
+     0.0, 0.00, 0.20, 1.00, //this is where the problem was!
      
      0.0, 0.00, 0.00, 1.00,    
      0.25, 0.2, 0.1, 1.00, //top tip of top cone   
      0.5, 0.0, 0.0, 1.00, //return to base 
      0.5, 0.0, 0.2, 1.00,
-    
-    //tryina get this top part of the cone right
+
      0.0, 0.0, 0.20, 1.00,
-     0.25, 0.2, 0.1, 1.00,
-     0.25, 0.2, 0.1, 1.00,
+     0.25, 0.2, 0.1, 1.00, //second top of tip 
      0.5, 0.0, 0.2, 1.00,
 
-     //add a line as a different primitive, as line, and hang it as string 
-     //would that require a different vertices var?
-     //maybe, because the var name is used 
-     
-     //FIND A WAY TO ROTATE EACH ON ITS OWN AXIS, then on a global axis 
-     //need to pay mind 
-
-
-
   ]);
-  var n = 16;   // The number of vertices
+  var n = 15;   // The number of vertices
 
   // Create a buffer object
   var vertexBuffer = gl.createBuffer();
