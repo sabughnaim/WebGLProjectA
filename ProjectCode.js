@@ -12,18 +12,14 @@
      //first, make the original primitive (DONE)
      //make copies of it, translated and rotated (DONE)
      //make it stop with html button (DONE)
-     //fill in the colors, make it solid from wireframe
+     //fill in the colors, make it solid from wireframe (DONE)
      //then make a string to hang them from string
-     //NED TO CHANGE MY DRAWING PRIMITIVES TO TRIANGLE or TRIANGLE_STRIP 
-
-
 
      //add a line as a different primitive, as line, and hang it as string 
      //would that require a different vertices var?
      //maybe, because the var name is used 
      
      //FIND A WAY TO ROTATE EACH ON ITS OWN AXIS, then on a global axis 
-     //need to pay mind 
 
 
 
@@ -31,8 +27,12 @@
 var VSHADER_SOURCE =
   'attribute vec4 a_Position;\n' +
   'uniform mat4 u_ModelMatrix;\n' +
+  'attribute vec4 a_Color;\n' +
+  'varying vec4 v_Color;\n'
   'void main() {\n' +
   '  gl_Position = u_ModelMatrix * a_Position;\n' +
+  '  gl_PointSize = 10.0;\n' +
+  '  v_Color = a_Color;\n' +
   '}\n';
 // Each instance computes all the on-screen attributes for just one VERTEX,
 // specifying that vertex so that it can be used as part of a drawing primitive
@@ -49,6 +49,7 @@ var VSHADER_SOURCE =
 
 // Fragment shader program----------------------------------
 var FSHADER_SOURCE =
+  'varying vec4 v_Color;\n'
   'void main() {\n' +
   '  gl_FragColor = vec4(0.0, 0.8, 1.0, 1.0);\n' + //teal color 
   '}\n';
@@ -89,6 +90,9 @@ function main() {
 
   // Specify the color for clearing <canvas>
   gl.clearColor(0, 0, 0, 1);
+
+    // Clear <canvas>
+  gl.clear(gl.COLOR_BUFFER_BIT);
 
   // Get storage location of u_ModelMatrix
   var u_ModelMatrix = gl.getUniformLocation(gl.program, 'u_ModelMatrix');
@@ -156,6 +160,13 @@ function initVertexBuffers(gl) {
     console.log('Failed to get the storage location of a_Position');
     return -1;
   }
+
+   // Get graphics system's handle for our Vertex Shader's color-input variable;
+  var a_Color = gl.getAttribLocation(gl.program, 'a_Color');
+  if(a_Color < 0) {
+    console.log('Failed to get the storage location of a_Color');
+    return -1;
+  }
   gl.vertexAttribPointer(a_Position, 4, gl.FLOAT, false, 0, 0);
   // websearch yields OpenGL version: 
   //    http://www.opengl.org/sdk/docs/man/xhtml/glVertexAttribPointer.xml
@@ -171,10 +182,10 @@ function initVertexBuffers(gl) {
         //        )
   // Enable the assignment to a_Position variable
   gl.enableVertexAttribArray(a_Position);
+  gl.enableVertexAttribArray(a_Color); 
 
   return n;
 }
-
 
 //YO THIS IS the whole drawing axes 
 
@@ -183,9 +194,13 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
   // Clear <canvas>
   gl.clear(gl.COLOR_BUFFER_BIT);
 
+  clrColr = new Float32Array(4);
+  clrColr = gl.getParameter(gl.COLOR_CLEAR_VALUE);
+  console.log("clear value:", clrColr);
+
   // Build our Robot Arm by successively moving our drawing axes
   //-------Draw Lower Arm---------------
-  modelMatrix.setTranslate(0.2, 0.2, 0);  // 'set' means DISCARD old matrix,
+  modelMatrix.setTranslate(0.2, 0.5, 0);  // 'set' means DISCARD old matrix,
               // (drawing axes centered in CVV), and then make new
               // drawing axes moved to the lower-left corner of CVV. 
   
@@ -200,7 +215,7 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
       // Pass our current matrix to the vertex shaders:
   gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
       // Draw the rectangle held in the VBO we created in initVertexBuffers().
-  gl.drawArrays(gl.LINE_LOOP, 0, n);
+  gl.drawArrays(gl.TRIANGLE_FAN, 0, n);
 
 
   modelMatrix = popMatrix();  
@@ -224,9 +239,9 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
               // we changed the DRAWING AXES used to draw it. Thus
               // we translate by the 0.1, not 0.1*0.6.)
   // DRAW BOX: Use this matrix to transform & draw our VBO's contents:
-  //COMMENTED OUT, SARA
+
   gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
-  gl.drawArrays(gl.LINE_LOOP, 0, n);
+  gl.drawArrays(gl.TRIANGLE_FAN, 0, n);
 
 
   //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -278,7 +293,7 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
               // we translate by the 0.1, not 0.1*0.6.)
   // DRAW BOX: Use this matrix to transform & draw our VBO's contents:
   gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
-  gl.drawArrays(gl.LINE_LOOP, 0, n);
+  gl.drawArrays(gl.TRIANGLE_FAN, 0, n);
   //=======================================================
 
   //CLICK AND DRAG WONT WORK 
