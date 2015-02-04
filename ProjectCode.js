@@ -141,7 +141,8 @@ function initVertexBuffers(gl) {
      //would that require a different vertices var?
      //maybe, because the var name is used 
      
-     //0.0, 0.0, 0.00, 1.00,
+     //FIND A WAY TO ROTATE EACH ON ITS OWN AXIS, then on a global axis 
+     //need to pay mind 
 
 
 
