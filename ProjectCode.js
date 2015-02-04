@@ -49,7 +49,7 @@ var VSHADER_SOURCE =
 // Fragment shader program----------------------------------
 var FSHADER_SOURCE =
   'void main() {\n' +
-  '  gl_FragColor = vec4(1.0, 0.0, 1.0, 1.0);\n' +
+  '  gl_FragColor = vec4(0.0, 0.8, 1.0, 1.0);\n' + //teal color 
   '}\n';
 //  Each instance computes all the on-screen attributes for just one PIXEL.
 // here we do the bare minimum: if we draw any part of any drawing primitive in 
@@ -211,10 +211,8 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
       // Pass our current matrix to the vertex shaders:
   gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
       // Draw the rectangle held in the VBO we created in initVertexBuffers().
-  gl.drawArrays(gl.LINE_LOOP, 0, n/4);
-  gl.drawArrays(gl.LINE_LOOP, n/4, n/4); 
-  gl.drawArrays(gl.LINE_LOOP, n/2, n/4);
-  gl.drawArrays(gl.LINE_LOOP, 3*n/4, n/4);  
+  gl.drawArrays(gl.LINE_LOOP, 0, n);
+
 
   modelMatrix = popMatrix();  
 
@@ -239,10 +237,9 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
   // DRAW BOX: Use this matrix to transform & draw our VBO's contents:
   //COMMENTED OUT, SARA
   gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
-  gl.drawArrays(gl.LINE_LOOP, 0, n/4);
-  gl.drawArrays(gl.LINE_LOOP, n/4, n/4); 
-  gl.drawArrays(gl.LINE_LOOP, n/2, n/4);
-  gl.drawArrays(gl.LINE_LOOP, 3*n/4, n/4);
+  gl.drawArrays(gl.LINE_LOOP, 0, n);
+
+
   //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   pushMatrix(modelMatrix);
   modelMatrix = popMatrix();
@@ -255,7 +252,7 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
 
   modelMatrix.scale(1,1,0.5);       // Make new drawing axes that
               // are smaller that the previous drawing axes by 0.6.
-  modelMatrix.rotate(currentAngle, 1, currentAngle, 0);  // Make new drawing axes that
+  modelMatrix.rotate(1, 1, 1, 0);  // Make new drawing axes that
               // spin around Z axis (0,0,1) of the previous drawing 
               // axes, using the same origin.
   modelMatrix.translate(-0.3, 0, -0.1);      // Make new drawing axes that
@@ -267,10 +264,8 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
   // DRAW BOX: Use this matrix to transform & draw our VBO's contents:
 
   gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
-  gl.drawArrays(gl.LINE_LOOP, 0, n/4);
-  gl.drawArrays(gl.LINE_LOOP, n/4, n/4); 
-  gl.drawArrays(gl.LINE_LOOP, n/2, n/4);
-  gl.drawArrays(gl.LINE_LOOP, 3*n/4, n/4);
+  gl.drawArrays(gl.TRIANGLE_FAN, 0, n);
+
   //=======================================================
   pushMatrix(modelMatrix);
   modelMatrix = popMatrix();
@@ -281,9 +276,9 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
   
 //make this one a little thinner in z 
 
-  modelMatrix.scale(1.5, 0.7, 2);       // Make new drawing axes that
+  modelMatrix.scale(2, 1.5, 1);       // Make new drawing axes that
               // are smaller that the previous drawing axes by 0.6.
-  modelMatrix.rotate(currentAngle, 1, currentAngle, 0);  // Make new drawing axes that
+  modelMatrix.rotate(1, 1, 1, 0);  // Make new drawing axes that
               // spin around Z axis (0,0,1) of the previous drawing 
               // axes, using the same origin.
        // Make new drawing axes that
@@ -294,10 +289,7 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
               // we translate by the 0.1, not 0.1*0.6.)
   // DRAW BOX: Use this matrix to transform & draw our VBO's contents:
   gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
-  gl.drawArrays(gl.LINE_LOOP, 0, n/4);
-  gl.drawArrays(gl.LINE_LOOP, n/4, n/4); 
-  gl.drawArrays(gl.LINE_LOOP, n/2, n/4);
-  gl.drawArrays(gl.LINE_LOOP, 3*n/4, n/4);
+  gl.drawArrays(gl.LINE_LOOP, 0, n);
   //=======================================================
 
   //CLICK AND DRAG WONT WORK 
