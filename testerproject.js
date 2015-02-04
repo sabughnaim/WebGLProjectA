@@ -148,17 +148,17 @@ function initVertexBuffers(gl) {
     return -1;
   }
 
-  // Bind the buffer object to target
-  gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-  // Write date into the buffer object
-  gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
-
   // Assign the buffer object to a_Position variable
   var a_Position = gl.getAttribLocation(gl.program, 'a_Position');
   if(a_Position < 0) {
     console.log('Failed to get the storage location of a_Position');
     return -1;
   }
+
+  // Bind the buffer object to target
+  gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+  // Write date into the buffer object
+  gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
 
   gl.vertexAttribPointer(a_Position, 4, gl.FLOAT, false, 0, 0);
   // websearch yields OpenGL version: 
@@ -210,7 +210,6 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
       // Draw the rectangle held in the VBO we created in initVertexBuffers().
   gl.drawArrays(gl.TRIANGLE_FAN, 0, n);
 
-
   modelMatrix = popMatrix();  
 
 //THE SECOND CHIME ARM 
@@ -240,6 +239,7 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
   //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   pushMatrix(modelMatrix);
   modelMatrix = popMatrix();
+  
   //THE THIRD CHIME ARM 
   modelMatrix.translate(-0.1, -0, -0.2);       // Make new drawing axes that
               // we moved upwards (+y) measured in prev. drawing axes, and

@@ -19,8 +19,17 @@
      //would that require a different vertices var?
      //maybe, because the var name is used 
      
-     //FIND A WAY TO ROTATE EACH ON ITS OWN AXIS, then on a global axis 
+     //how i fixed the shader problem and color not rendering: needed to actually 
+     //declare the colors inside the matrix 'vertices', alongside the vertices coordinates
+     //and g_fragcolor = v_color
 
+     //FIND A WAY TO ROTATE EACH ON ITS OWN AXIS, then on a global axis 
+    //want to pop the matrix when you go back to the normal axis, so can start
+    //from the beginning 
+    
+    //paul OH:
+    //change the vertices to be triangles 
+     //OR two calls with triangle fan. then have one rotated and scaled.
 
 
 // Vertex shader program----------------------------------
@@ -28,11 +37,11 @@ var VSHADER_SOURCE =
   'attribute vec4 a_Position;\n' +
   'uniform mat4 u_ModelMatrix;\n' +
   'attribute vec4 a_Color;\n' +
-  'varying vec4 v_Color;\n'
+  'varying vec4 v_Color;\n' +
   'void main() {\n' +
-  '  gl_Position = u_ModelMatrix * a_Position;\n' +
   '  gl_PointSize = 10.0;\n' +
   '  v_Color = a_Color;\n' +
+  '  gl_Position = u_ModelMatrix * a_Position;\n' +
   '}\n';
 // Each instance computes all the on-screen attributes for just one VERTEX,
 // specifying that vertex so that it can be used as part of a drawing primitive
@@ -49,9 +58,10 @@ var VSHADER_SOURCE =
 
 // Fragment shader program----------------------------------
 var FSHADER_SOURCE =
-  'varying vec4 v_Color;\n'
+  'precision mediump float;\n' +
+  'varying vec4 v_Color;\n' +
   'void main() {\n' +
-  '  gl_FragColor = vec4(0.0, 0.8, 1.0, 1.0);\n' + //teal color 
+  '  gl_FragColor = v_Color;\n' + //teal color 
   '}\n';
 //  Each instance computes all the on-screen attributes for just one PIXEL.
 // here we do the bare minimum: if we draw any part of any drawing primitive in 
@@ -120,24 +130,30 @@ function initVertexBuffers(gl) {
   var vertices = new Float32Array ([
 
     //inside triangle 
-     0.00, 0.00, 0.00, 1.00,    
-     0.50, 0.00, 0.00, 1.00,  
-     0.25, -0.60, 0.00, 1.00,
-     0.00, 0.00, 0.00, 1.00,
+     0.00, 0.00, 0.00, 1.00,    1.0, 1.0, 1.0,    
+     0.50, 0.00, 0.00, 1.00,    0.0, 0.0, 1.0,
+     0.25, -0.60, 0.00, 1.00,   0.4, 0.0, 0.2,
+     0.00, 0.00, 0.00, 1.00,    1.0, 1.0, 1.0,  
 
-     0.50, 0.00, 0.20, 1.00,  
-     0.25, -0.60, 0.00, 1.00,
-     0.00, 0.00, 0.20, 1.00,
-     0.0, 0.00, 0.20, 1.00, //this is where the problem was!
+     0.50, 0.00, 0.20, 1.00,    0.0, 1.0, 0.0,
+     0.25, -0.60, 0.00, 1.00,   0.0, 0.0, 1.0,
+     0.00, 0.00, 0.20, 1.00,    1.0, 0.0, 0.0,
+     0.0, 0.00, 0.20, 1.00,     1.0, 1.0, 1.0,
+     //this is where the problem was!
      
-     0.0, 0.00, 0.00, 1.00,    
-     0.25, 0.2, 0.1, 1.00, //top tip of top cone   
-     0.5, 0.0, 0.0, 1.00, //return to base 
-     0.5, 0.0, 0.2, 1.00,
+     0.0, 0.00, 0.00, 1.00,     1.0, 1.0, 1.0,    
+     0.25, 0.2, 0.1, 1.00,      1.0, 1.0, 1.0,
+     //top tip of top cone   
+     0.5, 0.0, 0.0, 1.00,       1.0, 1.0, 1.0,
+     //return to base 
+     0.5, 0.0, 0.2, 1.00,       0.0, 0.5, 1.0,
 
-     0.0, 0.0, 0.20, 1.00,
-     0.25, 0.2, 0.1, 1.00, //second top of tip 
-     0.5, 0.0, 0.2, 1.00,
+     0.0, 0.0, 0.20, 1.00,      1.0, 1.0, 1.0,
+     0.25, 0.2, 0.1, 1.00,      1.0, 0.7, 1.0,
+     //second top of tip 
+     0.5, 0.0, 0.2, 1.00,       1.0, 1.0, 0.0,
+     //change the vertices to be triangles 
+     //OR two calls with triangle fan. then have one rotated and scaled.
 
   ]);
   var n = 15;   // The number of vertices
@@ -148,11 +164,6 @@ function initVertexBuffers(gl) {
     console.log('Failed to create the buffer object');
     return -1;
   }
-
-  // Bind the buffer object to target
-  gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-  // Write date into the buffer object
-  gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
 
   // Assign the buffer object to a_Position variable
   var a_Position = gl.getAttribLocation(gl.program, 'a_Position');
@@ -167,7 +178,14 @@ function initVertexBuffers(gl) {
     console.log('Failed to get the storage location of a_Color');
     return -1;
   }
-  gl.vertexAttribPointer(a_Position, 4, gl.FLOAT, false, 0, 0);
+
+    // Bind the buffer object to target
+  gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+  // Write date into the buffer object
+  gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+  var FSIZE = vertices.BYTES_PER_ELEMENT;
+  gl.vertexAttribPointer(a_Position, 4, gl.FLOAT, false, FSIZE * 7, 0); //stride bytes 
+  gl.vertexAttribPointer(a_Color, 3, gl.FLOAT, false, FSIZE * 4, 0);
   // websearch yields OpenGL version: 
   //    http://www.opengl.org/sdk/docs/man/xhtml/glVertexAttribPointer.xml
         //  glVertexAttributePointer (
