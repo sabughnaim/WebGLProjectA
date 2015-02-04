@@ -203,7 +203,7 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
   modelMatrix.rotate(currentAngle, 1, 1, 0);  // Make new drawing axes that
               // that spin around z axis (0,0,1) of the previous 
               // drawing axes, using the same origin.
-  modelMatrix.translate( -0.3, 0,0);            // Move box so that we pivot
+  modelMatrix.translate(-0.4, 0,0);            // Move box so that we pivot
             // around the MIDDLE of it's lower edge, and not the left corner.
 
   pushMatrix(modelMatrix);  
@@ -225,7 +225,7 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
 
   modelMatrix.scale(0.5,0.9,0.5);       // Make new drawing axes that
               // are smaller that the previous drawing axes by 0.6.
-  modelMatrix.rotate(currentAngle, 1, currentAngle, 0);  // Make new drawing axes that
+  modelMatrix.rotate(1, 1, 1, 0);  // Make new drawing axes that
               // spin around Z axis (0,0,1) of the previous drawing 
               // axes, using the same origin.
   modelMatrix.translate(-0.5, 0, 0);      // Make new drawing axes that
