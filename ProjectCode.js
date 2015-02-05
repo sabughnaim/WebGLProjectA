@@ -27,6 +27,8 @@
     //want to pop the matrix when you go back to the normal axis, so can start
     //from the beginning 
     
+//maybe add a taurus at the top of the windchime 
+
     //paul OH:
     //change the vertices to be triangles 
      //OR two calls with triangle fan. then have one rotated and scaled.
@@ -129,6 +131,33 @@ function initVertexBuffers(gl) {
 //==============================================================================
   var vertices = new Float32Array ([
 
+    //START WITH BOTTOM HALF OF PYRAMID
+
+    //front face XY
+    0.25, -0.6, 0.1, 1,    0.4, 0.0, 0.2, //vertex that connects all triangles 
+    0.00, 0.00, 0.00,1,    0.0, 1.0, 1.0,
+    0.5, 0, 0, 1.00,       1.0, 0.0, 0.0,
+
+    //YZ on the left 
+    //it'll add the zeroeth vertex 
+    0, 0, 0.2, 1.00,       0.0, 0.5, 1.0,   //this second segment is the colors
+    0.00, 0.00, 0.00,      1.00, 1.0, 0.7, 1.0,
+
+    //back XY face
+    0, 0, 0.2, 1.00,        1.00, 0.2, 0.4, 
+    0.5, 0.0, 0.2, 1.00,    0.5, 1, 1.0, 
+
+    //YZ on the right 
+    0.5, 0.0, 0.2, 1.0,     1.0, 0.2, 0.1,
+    0.5, 0.0, 0.0, 1.0,     0.6, 0.2, 0.0,
+
+//JK DONT HAVE TO MAKE A FUCKIN TOP ONE BECAUSE I CAN ROTATE AND 
+//TRANSLATE THE FIRST ONE
+
+
+
+
+//OLD VERTICES,
     //inside triangle 
      0.00, 0.00, 0.00, 1.00,    1.0, 1.0, 1.0,    
      0.50, 0.00, 0.00, 1.00,    0.0, 0.0, 1.0,
@@ -138,10 +167,10 @@ function initVertexBuffers(gl) {
      0.50, 0.00, 0.20, 1.00,    0.0, 1.0, 0.0,
      0.25, -0.60, 0.00, 1.00,   0.0, 0.0, 1.0,
      0.00, 0.00, 0.20, 1.00,    1.0, 0.0, 0.0,
-     0.0, 0.00, 0.20, 1.00,     1.0, 1.0, 1.0,
+     0.0, 0.00, 0.20, 1.00,     0.0, 1.0, 0.0,
      //this is where the problem was!
      
-     0.0, 0.00, 0.00, 1.00,     1.0, 1.0, 1.0,    
+     0.0, 0.00, 0.00, 1.00,     1.0, 0.0, 1.0,    
      0.25, 0.2, 0.1, 1.00,      1.0, 1.0, 1.0,
      //top tip of top cone   
      0.5, 0.0, 0.0, 1.00,       1.0, 1.0, 1.0,
@@ -156,7 +185,8 @@ function initVertexBuffers(gl) {
      //OR two calls with triangle fan. then have one rotated and scaled.
 
   ]);
-  var n = 15;   // The number of vertices
+  var n = 9;   // The number of vertices
+
 
   // Create a buffer object
   var vertexBuffer = gl.createBuffer();
@@ -238,16 +268,16 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
 
   modelMatrix = popMatrix();  
 
-//THE SECOND CHIME ARM 
-  modelMatrix.translate(0, 0, 0.2);       // Make new drawing axes that
+//THE TOP PYRAMID 
+  modelMatrix.translate(0.5, 0, 0.2);       // Make new drawing axes that
               // we moved upwards (+y) measured in prev. drawing axes, and
               // moved rightwards (+x) by half the width of the box we just drew.
   
   //want to elongate this chime arm
 
-  modelMatrix.scale(0.5,0.9,0.5);       // Make new drawing axes that
+  modelMatrix.scale(1,0.5,1);       // Make new drawing axes that
               // are smaller that the previous drawing axes by 0.6.
-  modelMatrix.rotate(1, 1, 1, 0);  // Make new drawing axes that
+  modelMatrix.rotate(180, 90, 1, 0);  // Make new drawing axes that
               // spin around Z axis (0,0,1) of the previous drawing 
               // axes, using the same origin.
   modelMatrix.translate(-0.5, 0, 0);      // Make new drawing axes that
@@ -286,7 +316,7 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
   // DRAW BOX: Use this matrix to transform & draw our VBO's contents:
 
   gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
-  gl.drawArrays(gl.TRIANGLE_FAN, 0, n);
+  //gl.drawArrays(gl.TRIANGLE_FAN, 0, n);
 
   //=======================================================
   pushMatrix(modelMatrix);
@@ -311,7 +341,7 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
               // we translate by the 0.1, not 0.1*0.6.)
   // DRAW BOX: Use this matrix to transform & draw our VBO's contents:
   gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
-  gl.drawArrays(gl.TRIANGLE_FAN, 0, n);
+  //gl.drawArrays(gl.TRIANGLE_FAN, 0, n);
   //=======================================================
 
   //CLICK AND DRAG WONT WORK 
