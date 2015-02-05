@@ -3,6 +3,9 @@
 
 //HOPEFULLY  A WINDCHIME
 
+//office hour questions:
+//rope to hang windchime 
+
 //a) Draw several moving, turning, jointed colored shapes with openGL’s basic drawing primitives
 //(various forms of points, lines and triangles, etc.) using vertex buffer objects full of 3D vertex attributes. b) Use a glModelView-like matrix stack to transform those shapes them interactively,
 //c) Ensure that parts of your on-screen image move continuously without user input (animation) and
@@ -13,7 +16,7 @@
      //make copies of it, translated and rotated (DONE)
      //make it stop with html button (DONE)
      //fill in the colors, make it solid from wireframe (DONE)
-     //then make a string to hang them from string
+     //then make a string to hang them from string (NOT WORKING, COMMENTED OUT)
 
      //add a line as a different primitive, as line, and hang it as string 
      //would that require a different vertices var?
@@ -23,7 +26,8 @@
      //declare the colors inside the matrix 'vertices', alongside the vertices coordinates
      //and g_fragcolor = v_color
 
-     //FIND A WAY TO ROTATE EACH ON ITS OWN AXIS, then on a global axis 
+    //FIND A WAY TO ROTATE EACH ON ITS OWN AXIS, then on a global axis 
+    //^POPPING AND PUSHING MATRIX
     //want to pop the matrix when you go back to the normal axis, so can start
     //from the beginning 
     
@@ -122,7 +126,8 @@ function main() {
   // Start drawing
   var tick = function() {
     currentAngle = animate(currentAngle);  // Update the rotation angle
-    draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix);   // Draw the triangle
+    draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix);   // Draw the chime
+    //draw(gl, p, currentAngle, modelMatrix, u_ModelMatrix); //draw the rope
     requestAnimationFrame(tick, canvas);   // Request that the browser ?calls tick
   };
   tick();
@@ -158,38 +163,17 @@ function initVertexBuffers(gl) {
 //JK DONT HAVE TO MAKE A FUCKIN TOP ONE BECAUSE I CAN ROTATE AND 
 //TRANSLATE THE FIRST ONE
 
-
-
-
-//OLD VERTICES,
-    //inside triangle 
-     0.00, 0.00, 0.00, 1.00,    1.0, 1.0, 1.0,    
-     0.50, 0.00, 0.00, 1.00,    0.0, 0.0, 1.0,
-     0.25, -0.60, 0.00, 1.00,   0.4, 0.0, 0.2,
-     0.00, 0.00, 0.00, 1.00,    1.0, 1.0, 1.0,  
-
-     0.50, 0.00, 0.20, 1.00,    0.0, 1.0, 0.0,
-     0.25, -0.60, 0.00, 1.00,   0.0, 0.0, 1.0,
-     0.00, 0.00, 0.20, 1.00,    0.0, 0.2, 0.0,
-     0.0, 0.00, 0.20, 1.00,     0.0, 1.0, 0.0,
-     //this is where the problem was!
-     
-     0.0, 0.00, 0.00, 1.00,     1.0, 0.0, 1.0,    
-     0.25, 0.2, 0.1, 1.00,      1.0, 1.0, 1.0,
-     //top tip of top cone   
-     0.5, 0.0, 0.0, 1.00,       1.0, 1.0, 1.0,
-     //return to base 
-     0.5, 0.0, 0.2, 1.00,       0.0, 0.5, 1.0,
-
-     0.0, 0.0, 0.20, 1.00,      1.0, 1.0, 1.0,
-     0.25, 0.2, 0.1, 1.00,      1.0, 0.7, 1.0,
-     //second top of tip 
-     0.5, 0.0, 0.2, 1.00,       1.0, 1.0, 0.0,
-     //change the vertices to be triangles 
-     //OR two calls with triangle fan. then have one rotated and scaled.
-
   ]);
   var n = 9;   // The number of vertices
+
+//STRING BALANCING CHIME
+ // var rope = new Float32Array([ 
+  //    0.25, 0.2, 0.1, 1.0,   0, 1, 1,
+  //    0.25, 1, 0.1, 1.0,     0, 1, 1, 
+
+  //  ]);
+
+  //var p = 2;
 
 
   // Create a buffer object
@@ -217,6 +201,7 @@ function initVertexBuffers(gl) {
   gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
   // Write date into the buffer object
   gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+  //gl.bufferData(gl.ARRAY_BUFFER, rope, gl.STATIC_DRAW);
   var FSIZE = vertices.BYTES_PER_ELEMENT;
   gl.vertexAttribPointer(a_Position, 4, gl.FLOAT, false, FSIZE * 7, 0); //stride bytes 
   gl.vertexAttribPointer(a_Color, 3, gl.FLOAT, false, FSIZE * 4, 0);
@@ -237,11 +222,13 @@ function initVertexBuffers(gl) {
   gl.enableVertexAttribArray(a_Color); 
 
   return n;
+  //return p;
 }
 
 //YO THIS IS the whole drawing axes 
 
-function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
+//add p as parameter when doing rope
+function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) { 
 //==============================================================================
   // Clear <canvas>
   gl.clear(gl.COLOR_BUFFER_BIT);
@@ -251,8 +238,7 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
   console.log("clear value:", clrColr);
 
 
-  // Build our Robot Arm by successively moving our drawing axes
-  //-------Draw Lower Arm---------------
+//first bottom
   modelMatrix.setTranslate(0.2, 0.5, 0);  // 'set' means DISCARD old matrix,
               // (drawing axes centered in CVV), and then make new
               // drawing axes moved to the lower-left corner of CVV. 
@@ -269,6 +255,69 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
   gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
       // Draw the rectangle held in the VBO we created in initVertexBuffers().
   gl.drawArrays(gl.TRIANGLES, 0, n);
+
+
+  modelMatrix.setTranslate(-0.3, 0.1, 0);  // 'set' means DISCARD old matrix,
+              // (drawing axes centered in CVV), and then make new
+              // drawing axes moved to the lower-left corner of CVV. 
+  
+  modelMatrix.rotate(currentAngle, 1, currentAngle, 0);  // Make new drawing axes that
+              // that spin around z axis (0,0,1) of the previous 
+              // drawing axes, using the same origin.
+  modelMatrix.translate(-0.2, -0.4,0);            // Move box so that we pivot
+            // around the MIDDLE of it's lower edge, and not the left corner.
+
+  pushMatrix(modelMatrix);  
+  // DRAW BOX:  Use this matrix to transform & draw our VBo's contents:
+      // Pass our current matrix to the vertex shaders:
+  gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
+      // Draw the rectangle held in the VBO we created in initVertexBuffers().
+  gl.drawArrays(gl.TRIANGLES, 0, n);
+
+  //gl.drawArrays(gl.LINES, 0, p);
+
+//second top pyramid
+
+    modelMatrix.translate(0.5, 0, 0.2);       // Make new drawing axes that
+              // we moved upwards (+y) measured in prev. drawing axes, and
+              // moved rightwards (+x) by half the width of the box we just drew.
+  
+  //want to elongate this chime arm
+
+  modelMatrix.scale(1,0.5,1);       // Make new drawing axes that
+              // are smaller that the previous drawing axes by 0.6.
+  modelMatrix.rotate(180, 90, 1, 0);  //makes the top hat upside down 
+
+  modelMatrix.translate(-0.5, 0, 0);   //centers on bottom pyramid 
+
+  // DRAW BOX: Use this matrix to transform & draw our VBO's contents:
+
+  gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
+  gl.drawArrays(gl.TRIANGLES, 0, n);
+
+  pushMatrix(modelMatrix);
+  modelMatrix = popMatrix();
+
+//this is the second bottom body
+
+  modelMatrix.setTranslate(0.7, 0.2, 0.2);  // 'set' means DISCARD old matrix,
+              // (drawing axes centered in CVV), and then make new
+              // drawing axes moved to the lower-left corner of CVV. 
+  
+  modelMatrix.rotate(currentAngle, 1, currentAngle, 0);  // Make new drawing axes that
+              // that spin around z axis (0,0,1) of the previous 
+              // drawing axes, using the same origin.
+  modelMatrix.translate(-0.2, -0.4,0);            // Move box so that we pivot
+            // around the MIDDLE of it's lower edge, and not the left corner.
+
+  pushMatrix(modelMatrix);  
+  // DRAW BOX:  Use this matrix to transform & draw our VBo's contents:
+      // Pass our current matrix to the vertex shaders:
+  gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
+      // Draw the rectangle held in the VBO we created in initVertexBuffers().
+  gl.drawArrays(gl.TRIANGLES, 0, n);
+
+  //gl.drawArrays(gl.LINES, 0, p);
 
 
   modelMatrix = popMatrix();  
@@ -295,53 +344,32 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
   modelMatrix = popMatrix();
   //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  
-  //THE THIRD CHIME ARM 
-  modelMatrix.translate(-0.1, -0, -0.2);       // Make new drawing axes that
+  modelMatrix.translate(0.5, 0, 0.2);       // Make new drawing axes that
               // we moved upwards (+y) measured in prev. drawing axes, and
               // moved rightwards (+x) by half the width of the box we just drew.
   
-//make this one a little thinner in z 
+  //want to elongate this chime arm
 
-  modelMatrix.scale(1,1,0.5);       // Make new drawing axes that
+  modelMatrix.scale(1,0.5,1);       // Make new drawing axes that
               // are smaller that the previous drawing axes by 0.6.
-  modelMatrix.rotate(1, 1, 1, 0);  // Make new drawing axes that
-              // spin around Z axis (0,0,1) of the previous drawing 
-              // axes, using the same origin.
-  modelMatrix.translate(-0.3, 0, -0.1);      // Make new drawing axes that
-              // move sideways by half the width of our rectangle model
-              // (REMEMBER! modelMatrix.scale() DIDN'T change the 
-              // the vertices of our model stored in our VBO; instead
-              // we changed the DRAWING AXES used to draw it. Thus
-              // we translate by the 0.1, not 0.1*0.6.)
+  modelMatrix.rotate(180, 90, 1, 0);  //makes the top hat upside down 
+
+  modelMatrix.translate(-0.5, 0, 0);   //centers on bottom pyramid 
+
   // DRAW BOX: Use this matrix to transform & draw our VBO's contents:
 
   gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
-  //gl.drawArrays(gl.TRIANGLE_FAN, 0, n);
+  gl.drawArrays(gl.TRIANGLES, 0, n);
 
-  //=======================================================
   pushMatrix(modelMatrix);
   modelMatrix = popMatrix();
-  //THE FOURTH CHIME ARM 
-  modelMatrix.translate(0.15, 0, -0.2);       // Make new drawing axes that
-              // we moved upwards (+y) measured in prev. drawing axes, and
-              // moved rightwards (+x) by half the width of the box we just drew.
-  
-//make this one a little thinner in z 
 
-  modelMatrix.scale(2, 1.5, 1);       // Make new drawing axes that
-              // are smaller that the previous drawing axes by 0.6.
-  modelMatrix.rotate(1, 1, 1, 0);  // Make new drawing axes that
-              // spin around Z axis (0,0,1) of the previous drawing 
-              // axes, using the same origin.
-       // Make new drawing axes that
-              // move sideways by half the width of our rectangle model
-              // (REMEMBER! modelMatrix.scale() DIDN'T change the 
-              // the vertices of our model stored in our VBO; instead
-              // we changed the DRAWING AXES used to draw it. Thus
-              // we translate by the 0.1, not 0.1*0.6.)
-  // DRAW BOX: Use this matrix to transform & draw our VBO's contents:
-  gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
-  //gl.drawArrays(gl.TRIANGLE_FAN, 0, n);
+
+
+
+
+
+
   //=======================================================
 
   //CLICK AND DRAG WONT WORK 
