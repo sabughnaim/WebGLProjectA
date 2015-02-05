@@ -1,8 +1,10 @@
 <!DOCTYPE html>
+
+<!Sara Abu-Ghnaim WEBGL Project A, EECS 351 Computer Graphics>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Sara Glass Windchimes</title>
+    <title>Glass Windchimes</title>
   </head>
 
   <body onload="main()">
@@ -10,13 +12,20 @@
     Please use a browser that supports "canvas"
     </canvas>
     <p>
-      <button type="button" onclick="moreCCW()">Faster</button>
+      
+      <br> </br>
+
       <button type="button" onclick="lessCCW()">Slower</button>
       <button type="button" onclick="runStop()">Run/Stop</button>
+      <button type="button" onclick="moreCCW()">Faster</button>
+      
       <br> </br>
+
+      <div id="welcomeDiv"  style="display:none;" class="answer_list" >User instructions: Chime/Mobile. Click Faster and Slower to affect the rotation speed. Run/Stop to completely halt the animations.  </div>
+      <input type="button" name="answer" value="HELP" onclick="showDiv()" />
+      
       <br> </br>
-      <b> Chime/Mobile. Click Faster and Slower to affect the 
-        <br>rotation speed. Run/Stop to completely halt the animations. </b>
+
     </p>
     <div id='Mouse'> Mouse Drag totals (CVV coords) </div>
       <button type="button" onClick='clearDrag()'>Clear</button>

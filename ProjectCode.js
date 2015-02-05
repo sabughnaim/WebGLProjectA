@@ -6,6 +6,8 @@
 //office hour questions:
 //rope to hang windchime 
 
+//everything not working is marked by NOT WORKING, control f brotha 
+
 //a) Draw several moving, turning, jointed colored shapes with openGL’s basic drawing primitives
 //(various forms of points, lines and triangles, etc.) using vertex buffer objects full of 3D vertex attributes. b) Use a glModelView-like matrix stack to transform those shapes them interactively,
 //c) Ensure that parts of your on-screen image move continuously without user input (animation) and
@@ -19,8 +21,6 @@
      //then make a string to hang them from string (NOT WORKING, COMMENTED OUT)
 
      //add a line as a different primitive, as line, and hang it as string 
-     //would that require a different vertices var?
-     //maybe, because the var name is used 
      
      //how i fixed the shader problem and color not rendering: needed to actually 
      //declare the colors inside the matrix 'vertices', alongside the vertices coordinates
@@ -166,14 +166,14 @@ function initVertexBuffers(gl) {
   ]);
   var n = 9;   // The number of vertices
 
-//STRING BALANCING CHIME
+//STRING BALANCING CHIME, NOT WORKING 
  // var rope = new Float32Array([ 
   //    0.25, 0.2, 0.1, 1.0,   0, 1, 1,
   //    0.25, 1, 0.1, 1.0,     0, 1, 1, 
 
   //  ]);
 
-  //var p = 2;
+  //var p = 2; NOT WORKING
 
 
   // Create a buffer object
@@ -243,7 +243,8 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
               // (drawing axes centered in CVV), and then make new
               // drawing axes moved to the lower-left corner of CVV. 
   
-  modelMatrix.rotate(currentAngle, 1, currentAngle, 0);  // Make new drawing axes that
+
+  modelMatrix.rotate(currentAngle*2, 1, currentAngle, 0);  // Make new drawing axes that
               // that spin around z axis (0,0,1) of the previous 
               // drawing axes, using the same origin.
   modelMatrix.translate(-0.2, -0.4,0);            // Move box so that we pivot
@@ -257,11 +258,13 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
   gl.drawArrays(gl.TRIANGLES, 0, n);
 
 
-  modelMatrix.setTranslate(-0.3, 0.1, 0);  // 'set' means DISCARD old matrix,
+//third whole chime 
+  modelMatrix.setTranslate(-0.3, -0.2, 0);  // 'set' means DISCARD old matrix,
               // (drawing axes centered in CVV), and then make new
               // drawing axes moved to the lower-left corner of CVV. 
-  
-  modelMatrix.rotate(currentAngle, 1, currentAngle, 0);  // Make new drawing axes that
+  modelMatrix.scale(1,0.7,1); //affects the whole second chime
+  //thirs chiem goes faster by 4 times 
+  modelMatrix.rotate(currentAngle*4, 1, currentAngle, 0);  // Make new drawing axes that
               // that spin around z axis (0,0,1) of the previous 
               // drawing axes, using the same origin.
   modelMatrix.translate(-0.2, -0.4,0);            // Move box so that we pivot
@@ -274,9 +277,12 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
       // Draw the rectangle held in the VBO we created in initVertexBuffers().
   gl.drawArrays(gl.TRIANGLES, 0, n);
 
-  //gl.drawArrays(gl.LINES, 0, p);
+  //gl.drawArrays(gl.LINES, 0, p); NOT WORKING 
 
-//second top pyramid
+  pushMatrix(modelMatrix);
+    modelMatrix = popMatrix();
+
+//third top pyramid
 
     modelMatrix.translate(0.5, 0, 0.2);       // Make new drawing axes that
               // we moved upwards (+y) measured in prev. drawing axes, and
@@ -284,9 +290,13 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
   
   //want to elongate this chime arm
 
-  modelMatrix.scale(1,0.5,1);       // Make new drawing axes that
+  modelMatrix.scale(1,0.4,1);       // Make new drawing axes that
               // are smaller that the previous drawing axes by 0.6.
   modelMatrix.rotate(180, 90, 1, 0);  //makes the top hat upside down 
+
+  modelMatrix.rotate(1,1,currentAngle,0); //NOT WORKING 
+
+   gl.drawArrays(gl.TRIANGLES, 0, n);
 
   modelMatrix.translate(-0.5, 0, 0);   //centers on bottom pyramid 
 
@@ -295,16 +305,18 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
   gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
   gl.drawArrays(gl.TRIANGLES, 0, n);
 
-  pushMatrix(modelMatrix);
+
   modelMatrix = popMatrix();
 
-//this is the second bottom body
+  //==================
 
-  modelMatrix.setTranslate(0.7, 0.2, 0.2);  // 'set' means DISCARD old matrix,
+//this is the first
+
+  modelMatrix.setTranslate(0.5, 0.2, 0.2);  // 'set' means DISCARD old matrix,
               // (drawing axes centered in CVV), and then make new
               // drawing axes moved to the lower-left corner of CVV. 
   
-  modelMatrix.rotate(currentAngle, 1, currentAngle, 0);  // Make new drawing axes that
+  modelMatrix.rotate(currentAngle*1.5, 1, currentAngle, 0);  // Make new drawing axes that
               // that spin around z axis (0,0,1) of the previous 
               // drawing axes, using the same origin.
   modelMatrix.translate(-0.2, -0.4,0);            // Move box so that we pivot
@@ -329,7 +341,7 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
   
   //want to elongate this chime arm
 
-  modelMatrix.scale(1,0.5,1);       // Make new drawing axes that
+  modelMatrix.scale(1,0.6,1);       // Make new drawing axes that
               // are smaller that the previous drawing axes by 0.6.
   modelMatrix.rotate(180, 90, 1, 0);  //makes the top hat upside down 
 
@@ -340,19 +352,22 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
   gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
   gl.drawArrays(gl.TRIANGLES, 0, n);
 
-  pushMatrix(modelMatrix);
+
   modelMatrix = popMatrix();
+  //dont want to push, need new aves 
   //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  
+ //SECOND TOP PART
   modelMatrix.translate(0.5, 0, 0.2);       // Make new drawing axes that
               // we moved upwards (+y) measured in prev. drawing axes, and
               // moved rightwards (+x) by half the width of the box we just drew.
   
   //want to elongate this chime arm
 
-  modelMatrix.scale(1,0.5,1);       // Make new drawing axes that
+  modelMatrix.scale(1,0.2,1);       // Make new drawing axes that
               // are smaller that the previous drawing axes by 0.6.
   modelMatrix.rotate(180, 90, 1, 0);  //makes the top hat upside down 
+  modelMatrix.rotate(1, 1, currentAngle, 0); //NOT WORKING
 
   modelMatrix.translate(-0.5, 0, 0);   //centers on bottom pyramid 
 
@@ -363,10 +378,6 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
 
   pushMatrix(modelMatrix);
   modelMatrix = popMatrix();
-
-
-
-
 
 
 
@@ -385,8 +396,7 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
   // onto the stack to save it; then later 'pop' when we're ready to draw
   // the upper pincer.
   //----------------------------------------------------------
-  pushMatrix(modelMatrix);
-  modelMatrix = popMatrix();
+
 
 
 }
@@ -430,4 +440,9 @@ function runStop() {
   else {
     ANGLE_STEP = myTmp;
   }
+}
+
+//to print user instructions
+function showDiv() {
+   document.getElementById('welcomeDiv').style.display = "block";
 }

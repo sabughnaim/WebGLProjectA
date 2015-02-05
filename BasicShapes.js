@@ -211,6 +211,7 @@ function makeDiamond() {
 // Make a diamond-like shape from two adjacent tetrahedra, aligned with Z axis.
 
 	// YOU write this one...
+	//WHOAH HEY I DID THIS, IN MY PROJECT A
 	
 }
 
