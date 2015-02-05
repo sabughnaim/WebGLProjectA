@@ -30,8 +30,9 @@
 //maybe add a taurus at the top of the windchime 
 
     //paul OH:
-    //change the vertices to be triangles 
-     //OR two calls with triangle fan. then have one rotated and scaled.
+    //change the vertices to be triangles (DONE)
+    //looks better with triangles
+     //OR two calls with triangle fan. then have one rotated and scaled. (DONE) 
 
 
 // Vertex shader program----------------------------------
@@ -134,22 +135,25 @@ function initVertexBuffers(gl) {
     //START WITH BOTTOM HALF OF PYRAMID
 
     //front face XY
-    0.25, -0.6, 0.1, 1,    0.4, 0.0, 0.2, //vertex that connects all triangles 
-    0.00, 0.00, 0.00,1,    0.0, 1.0, 1.0,
-    0.5, 0, 0, 1.00,       1.0, 0.0, 0.0,
+    0.25, -0.6, 0.1, 1,    0.0, 0.4, 0.4, //vertex that connects all triangles 
+    0.00, 0.00, 0.00,1,    0.0, 1.0, 0.2,
+    0.5, 0, 0, 1.00,       0.0, 1.0, 0.0,
 
     //YZ on the left 
     //it'll add the zeroeth vertex 
-    0, 0, 0.2, 1.00,       0.0, 0.5, 1.0,   //this second segment is the colors
-    0.00, 0.00, 0.00,      1.00, 1.0, 0.7, 1.0,
+    0.25, -0.6, 0.1, 1,    0.0, 0.4, 0.0,
+    0, 0, 0.2, 1.00,          0.0, 0.5, 1.0,   //this second segment is the colors
+    0, 0.00, 0.00,1.00,    0.0, 0.7, 1.0,
 
     //back XY face
-    0, 0, 0.2, 1.00,        1.00, 0.2, 0.4, 
-    0.5, 0.0, 0.2, 1.00,    0.5, 1, 1.0, 
+    0.25, -0.6, 0.1, 1,    1.0, 0.4, 0.0,
+    0, 0, 0.2, 1.00,        0.0, 0.2, 0.9, 
+    0.5, 0.0, 0.2, 1.00,    0.0, 1, 1.0, 
 
     //YZ on the right 
-    0.5, 0.0, 0.2, 1.0,     1.0, 0.2, 0.1,
-    0.5, 0.0, 0.0, 1.0,     0.6, 0.2, 0.0,
+    0.25, -0.6, 0.1, 1,     1.0, 0.0, 1.0,
+    0.5, 0.0, 0.2, 1.0,    0.0, 0.4, 0.1,
+    0.5, 0.0, 0.0, 1.0,     0.0, 0.2, 0.6,
 
 //JK DONT HAVE TO MAKE A FUCKIN TOP ONE BECAUSE I CAN ROTATE AND 
 //TRANSLATE THE FIRST ONE
@@ -166,7 +170,7 @@ function initVertexBuffers(gl) {
 
      0.50, 0.00, 0.20, 1.00,    0.0, 1.0, 0.0,
      0.25, -0.60, 0.00, 1.00,   0.0, 0.0, 1.0,
-     0.00, 0.00, 0.20, 1.00,    1.0, 0.0, 0.0,
+     0.00, 0.00, 0.20, 1.00,    0.0, 0.2, 0.0,
      0.0, 0.00, 0.20, 1.00,     0.0, 1.0, 0.0,
      //this is where the problem was!
      
@@ -246,16 +250,17 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
   clrColr = gl.getParameter(gl.COLOR_CLEAR_VALUE);
   console.log("clear value:", clrColr);
 
+
   // Build our Robot Arm by successively moving our drawing axes
   //-------Draw Lower Arm---------------
   modelMatrix.setTranslate(0.2, 0.5, 0);  // 'set' means DISCARD old matrix,
               // (drawing axes centered in CVV), and then make new
               // drawing axes moved to the lower-left corner of CVV. 
   
-  modelMatrix.rotate(currentAngle, 1, 1, 0);  // Make new drawing axes that
+  modelMatrix.rotate(currentAngle, 1, currentAngle, 0);  // Make new drawing axes that
               // that spin around z axis (0,0,1) of the previous 
               // drawing axes, using the same origin.
-  modelMatrix.translate(-0.4, 0,0);            // Move box so that we pivot
+  modelMatrix.translate(-0.2, -0.4,0);            // Move box so that we pivot
             // around the MIDDLE of it's lower edge, and not the left corner.
 
   pushMatrix(modelMatrix);  
@@ -263,7 +268,7 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
       // Pass our current matrix to the vertex shaders:
   gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
       // Draw the rectangle held in the VBO we created in initVertexBuffers().
-  gl.drawArrays(gl.TRIANGLE_FAN, 0, n);
+  gl.drawArrays(gl.TRIANGLES, 0, n);
 
 
   modelMatrix = popMatrix();  
@@ -277,24 +282,19 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
 
   modelMatrix.scale(1,0.5,1);       // Make new drawing axes that
               // are smaller that the previous drawing axes by 0.6.
-  modelMatrix.rotate(180, 90, 1, 0);  // Make new drawing axes that
-              // spin around Z axis (0,0,1) of the previous drawing 
-              // axes, using the same origin.
-  modelMatrix.translate(-0.5, 0, 0);      // Make new drawing axes that
-              // move sideways by half the width of our rectangle model
-              // (REMEMBER! modelMatrix.scale() DIDN'T change the 
-              // the vertices of our model stored in our VBO; instead
-              // we changed the DRAWING AXES used to draw it. Thus
-              // we translate by the 0.1, not 0.1*0.6.)
+  modelMatrix.rotate(180, 90, 1, 0);  //makes the top hat upside down 
+
+  modelMatrix.translate(-0.5, 0, 0);   //centers on bottom pyramid 
+
   // DRAW BOX: Use this matrix to transform & draw our VBO's contents:
 
   gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
-  gl.drawArrays(gl.TRIANGLE_FAN, 0, n);
+  gl.drawArrays(gl.TRIANGLES, 0, n);
 
-
-  //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   pushMatrix(modelMatrix);
   modelMatrix = popMatrix();
+  //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 
   //THE THIRD CHIME ARM 
   modelMatrix.translate(-0.1, -0, -0.2);       // Make new drawing axes that
               // we moved upwards (+y) measured in prev. drawing axes, and
