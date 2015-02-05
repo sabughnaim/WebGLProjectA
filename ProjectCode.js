@@ -26,8 +26,8 @@
      //declare the colors inside the matrix 'vertices', alongside the vertices coordinates
      //and g_fragcolor = v_color
 
-    //FIND A WAY TO ROTATE EACH ON ITS OWN AXIS, then on a global axis 
-    //^POPPING AND PUSHING MATRIX
+    //FIND A WAY TO ROTATE EACH ON ITS OWN AXIS, then on a global axis (DONE)
+    // ^ did this with POPPING AND PUSHING MATRIX
     //want to pop the matrix when you go back to the normal axis, so can start
     //from the beginning 
     
@@ -35,7 +35,6 @@
 
     //paul OH:
     //change the vertices to be triangles (DONE)
-    //looks better with triangles
      //OR two calls with triangle fan. then have one rotated and scaled. (DONE) 
 
 
@@ -77,6 +76,48 @@ var FSHADER_SOURCE =
 
 // Global Variable -- Rotation angle rate (degrees/second)
 var ANGLE_STEP = 45.0;
+
+var vertices = new Float32Array ([
+
+    //with triangles primitives
+    //front face XY
+    0.25, -0.6, 0.1, 1,    0.0, 0.4, 0.4, //vertex that connects all triangles 
+    0.00, 0.00, 0.00,1,    0.0, 1.0, 0.2,
+    0.5, 0, 0, 1.00,       0.0, 1.0, 0.0,
+
+    //YZ on the left 
+    0.25, -0.6, 0.1, 1,    0.0, 0.4, 0.0,
+    0, 0, 0.2, 1.00,          0.0, 0.5, 1.0,   //this second segment is the colors
+    0, 0.00, 0.00,1.00,    0.0, 0.7, 1.0,
+
+    //back XY face
+    0.25, -0.6, 0.1, 1,    1.0, 0.4, 0.0,
+    0, 0, 0.2, 1.00,        0.0, 0.2, 0.9, 
+    0.5, 0.0, 0.2, 1.00,    0.0, 1, 1.0, 
+
+    //YZ on the right 
+    0.25, -0.6, 0.1, 1,     1.0, 0.0, 1.0,
+    0.5, 0.0, 0.2, 1.0,    0.0, 0.4, 0.1,
+    0.5, 0.0, 0.0, 1.0,     0.0, 0.2, 0.6,
+
+
+//JK DONT HAVE TO MAKE A FUCKIN TOP ONE BECAUSE I CAN ROTATE AND 
+//TRANSLATE THE FIRST ONE
+
+  ]);
+
+  var rope = new Float32Array([ 
+      0.25, 0, 0.1, 1.0,   0, 1, 1,
+      0.25, -4, 0.1, 1.0,  0, 1, 1, 
+      1, -4, 0.1, 1.0,     0, 1, 1,
+
+    ]);
+
+    // Create a buffer object
+  var vertexBuffer ;
+  var vertexBuffer2;
+  var a_Position;
+  var a_Color;
 
 function main() {
 //==============================================================================
@@ -126,7 +167,7 @@ function main() {
   // Start drawing
   var tick = function() {
     currentAngle = animate(currentAngle);  // Update the rotation angle
-    draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix);   // Draw the chime
+    draw(gl, n, 2, currentAngle, modelMatrix, u_ModelMatrix);   // Draw the chime
     //draw(gl, p, currentAngle, modelMatrix, u_ModelMatrix); //draw the rope
     requestAnimationFrame(tick, canvas);   // Request that the browser ?calls tick
   };
@@ -135,63 +176,36 @@ function main() {
 
 function initVertexBuffers(gl) {
 //==============================================================================
-  var vertices = new Float32Array ([
-
-    //START WITH BOTTOM HALF OF PYRAMID
-
-    //front face XY
-    0.25, -0.6, 0.1, 1,    0.0, 0.4, 0.4, //vertex that connects all triangles 
-    0.00, 0.00, 0.00,1,    0.0, 1.0, 0.2,
-    0.5, 0, 0, 1.00,       0.0, 1.0, 0.0,
-
-    //YZ on the left 
-    //it'll add the zeroeth vertex 
-    0.25, -0.6, 0.1, 1,    0.0, 0.4, 0.0,
-    0, 0, 0.2, 1.00,          0.0, 0.5, 1.0,   //this second segment is the colors
-    0, 0.00, 0.00,1.00,    0.0, 0.7, 1.0,
-
-    //back XY face
-    0.25, -0.6, 0.1, 1,    1.0, 0.4, 0.0,
-    0, 0, 0.2, 1.00,        0.0, 0.2, 0.9, 
-    0.5, 0.0, 0.2, 1.00,    0.0, 1, 1.0, 
-
-    //YZ on the right 
-    0.25, -0.6, 0.1, 1,     1.0, 0.0, 1.0,
-    0.5, 0.0, 0.2, 1.0,    0.0, 0.4, 0.1,
-    0.5, 0.0, 0.0, 1.0,     0.0, 0.2, 0.6,
-
-//JK DONT HAVE TO MAKE A FUCKIN TOP ONE BECAUSE I CAN ROTATE AND 
-//TRANSLATE THE FIRST ONE
-
-  ]);
+  
   var n = 9;   // The number of vertices
 
 //STRING BALANCING CHIME, NOT WORKING 
- // var rope = new Float32Array([ 
-  //    0.25, 0.2, 0.1, 1.0,   0, 1, 1,
-  //    0.25, 1, 0.1, 1.0,     0, 1, 1, 
+  
 
-  //  ]);
+  var p = 2;
 
-  //var p = 2; NOT WORKING
-
-
-  // Create a buffer object
-  var vertexBuffer = gl.createBuffer();
+//already declared it here initializing to a value 
+  vertexBuffer = gl.createBuffer();
   if (!vertexBuffer) {
     console.log('Failed to create the buffer object');
     return -1;
   }
 
+  vertexBuffer2 = gl.createBuffer();
+  if (!vertexBuffer2) {
+    console.log('Failed to create the buffer object');
+    return -1;
+  }
+
   // Assign the buffer object to a_Position variable
-  var a_Position = gl.getAttribLocation(gl.program, 'a_Position');
+  a_Position = gl.getAttribLocation(gl.program, 'a_Position');
   if(a_Position < 0) {
     console.log('Failed to get the storage location of a_Position');
     return -1;
   }
 
    // Get graphics system's handle for our Vertex Shader's color-input variable;
-  var a_Color = gl.getAttribLocation(gl.program, 'a_Color');
+   a_Color = gl.getAttribLocation(gl.program, 'a_Color');
   if(a_Color < 0) {
     console.log('Failed to get the storage location of a_Color');
     return -1;
@@ -199,12 +213,15 @@ function initVertexBuffers(gl) {
 
     // Bind the buffer object to target
   gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+
   // Write date into the buffer object
   gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
-  //gl.bufferData(gl.ARRAY_BUFFER, rope, gl.STATIC_DRAW);
-  var FSIZE = vertices.BYTES_PER_ELEMENT;
-  gl.vertexAttribPointer(a_Position, 4, gl.FLOAT, false, FSIZE * 7, 0); //stride bytes 
-  gl.vertexAttribPointer(a_Color, 3, gl.FLOAT, false, FSIZE * 4, 0);
+
+  gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer2); //for the rope 
+
+  gl.bufferData(gl.ARRAY_BUFFER, rope, gl.STATIC_DRAW);
+
+
   // websearch yields OpenGL version: 
   //    http://www.opengl.org/sdk/docs/man/xhtml/glVertexAttribPointer.xml
         //  glVertexAttributePointer (
@@ -218,25 +235,33 @@ function initVertexBuffers(gl) {
         //          our first value?
         //        )
   // Enable the assignment to a_Position variable
-  gl.enableVertexAttribArray(a_Position);
-  gl.enableVertexAttribArray(a_Color); 
+
 
   return n;
-  //return p;
+  return p;
 }
 
 //YO THIS IS the whole drawing axes 
 
 //add p as parameter when doing rope
-function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) { 
+function draw(gl, n, p, currentAngle, modelMatrix, u_ModelMatrix) { 
 //==============================================================================
   // Clear <canvas>
   gl.clear(gl.COLOR_BUFFER_BIT);
 
   clrColr = new Float32Array(4);
   clrColr = gl.getParameter(gl.COLOR_CLEAR_VALUE);
-  console.log("clear value:", clrColr);
+  //console.log("clear value:", clrColr);
 
+  gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+
+  var FSIZE = vertices.BYTES_PER_ELEMENT;
+  gl.vertexAttribPointer(a_Position, 4, gl.FLOAT, false, FSIZE * 7, 0); //stride bytes 
+  gl.vertexAttribPointer(a_Color, 3, gl.FLOAT, false, FSIZE * 4, 0);
+
+  gl.enableVertexAttribArray(a_Position);
+  gl.enableVertexAttribArray(a_Color);
+  
 
 //first bottom
   modelMatrix.setTranslate(0.2, 0.5, 0);  // 'set' means DISCARD old matrix,
@@ -277,10 +302,9 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
       // Draw the rectangle held in the VBO we created in initVertexBuffers().
   gl.drawArrays(gl.TRIANGLES, 0, n);
 
-  //gl.drawArrays(gl.LINES, 0, p); NOT WORKING 
-
+  gl.drawArrays(gl.TRIANGLES, 0, p);
   pushMatrix(modelMatrix);
-    modelMatrix = popMatrix();
+  modelMatrix = popMatrix();
 
 //third top pyramid
 
@@ -379,6 +403,40 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
   pushMatrix(modelMatrix);
   modelMatrix = popMatrix();
 
+  //new Matrix4([1, 0, 0, 0,
+    //                        0, 1, 0, 0,
+      //                      0, 0, 1, 0,
+        //                    0, 0, 0, 1,
+          //                  ]);
+
+//_______
+//binding for the rope
+
+  gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer2);
+
+  var FSIZE = rope.BYTES_PER_ELEMENT;
+  gl.vertexAttribPointer(a_Position, 4, gl.FLOAT, false, FSIZE * 7, 0); //stride bytes 
+  gl.vertexAttribPointer(a_Color, 3, gl.FLOAT, false, FSIZE * 4, 0);
+  
+
+  modelMatrix.scale(0, Math.sin(currentAngle/20)/3, 0); 
+  modelMatrix.rotate(5, 1, 0, 0); 
+ // modelMatric.rotate()
+  gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
+      // Draw the rectangle held in the VBO we created in initVertexBuffers().
+
+  gl.drawArrays(gl.LINES, 0, 2);
+  
+    //--------
+modelMatrix.translate(0, 7,0);
+ modelMatrix.scale(0, -Math.sin(currentAngle/10), 0); 
+  modelMatrix.rotate(5, 1, 0, 0); 
+ // modelMatric.rotate()
+  gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
+      // Draw the rectangle held in the VBO we created in initVertexBuffers().
+
+  gl.drawArrays(gl.LINES, 0, 2);
+
 
 
   //=======================================================
@@ -413,7 +471,7 @@ function animate(angle) {
   
   // Update the current rotation angle (adjusted by the elapsed time)
   //  limit the angle to move smoothly between +20 and -85 degrees:
-  if(angle >   .0 && ANGLE_STEP > 0) ANGLE_STEP = -ANGLE_STEP;
+  if(angle >   0.0 && ANGLE_STEP > 0) ANGLE_STEP = -ANGLE_STEP;
   if(angle <  360.0 && ANGLE_STEP < 0) ANGLE_STEP = -ANGLE_STEP;
   
   var newAngle = angle + (ANGLE_STEP * elapsed) / 1000.0;
