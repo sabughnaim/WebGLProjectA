@@ -3,14 +3,13 @@
 
 //HOPEFULLY  A WINDCHIME
 
-//office hour questions:
-//rope to hang windchime 
-
-//everything not working is marked by NOT WORKING, control f brotha 
-
 //a) Draw several moving, turning, jointed colored shapes with openGL’s basic drawing primitives
-//(various forms of points, lines and triangles, etc.) using vertex buffer objects full of 3D vertex attributes. b) Use a glModelView-like matrix stack to transform those shapes them interactively,
+//(various forms of points, lines and triangles, etc.) using vertex buffer objects full of 3D vertex attributes. 
+
+//b) Use a glModelView-like matrix stack to transform those shapes them interactively,
+
 //c) Ensure that parts of your on-screen image move continuously without user input (animation) and
+
 //d) Make some parts of at least one jointed object move smoothly in response to keyboard and mouse inputs.
 
 //plan
@@ -18,9 +17,9 @@
      //make copies of it, translated and rotated (DONE)
      //make it stop with html button (DONE)
      //fill in the colors, make it solid from wireframe (DONE)
-     //then make a string to hang them from string (NOT WORKING, COMMENTED OUT)
+     //then make a string to hang them from string (DONE)
 
-     //add a line as a different primitive, as line, and hang it as string 
+     //add a line as a different primitive, as line, and hang it as string (DONE)
      
      //how i fixed the shader problem and color not rendering: needed to actually 
      //declare the colors inside the matrix 'vertices', alongside the vertices coordinates
@@ -31,12 +30,10 @@
     //want to pop the matrix when you go back to the normal axis, so can start
     //from the beginning 
     
-//maybe add a taurus at the top of the windchime 
 
     //paul OH:
     //change the vertices to be triangles (DONE)
      //OR two calls with triangle fan. then have one rotated and scaled. (DONE) 
-
 
 // Vertex shader program----------------------------------
 var VSHADER_SOURCE =
@@ -108,8 +105,8 @@ var vertices = new Float32Array ([
 
   var rope = new Float32Array([ 
       0.25, 0, 0.1, 1.0,   0, 1, 1,
-      0.25, -4, 0.1, 1.0,  0, 1, 1, 
-      1, -4, 0.1, 1.0,     0, 1, 1,
+      0.25, -8, 0.1, 1.0,  0, 1, 1, 
+      
 
     ]);
 
@@ -178,11 +175,6 @@ function initVertexBuffers(gl) {
 //==============================================================================
   
   var n = 12;   // The number of vertices
-
-//STRING BALANCING CHIME, NOT WORKING 
-  
-
-  var p = 2;
 
 //already declared it here initializing to a value 
   vertexBuffer = gl.createBuffer();
@@ -322,7 +314,6 @@ function draw(gl, n, p, currentAngle, modelMatrix, u_ModelMatrix) {
   //this makes it bob up and down
 
 
-
    gl.drawArrays(gl.TRIANGLES, 0, n);
 
   modelMatrix.translate(-0.5, 0, 0);   //centers on bottom pyramid 
@@ -434,6 +425,9 @@ function draw(gl, n, p, currentAngle, modelMatrix, u_ModelMatrix) {
       // Draw the rectangle held in the VBO we created in initVertexBuffers().
 
   gl.drawArrays(gl.LINES, 0, 2);
+
+
+
   
     //--------
 modelMatrix.translate(0, 7,0);
