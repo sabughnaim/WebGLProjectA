@@ -126,7 +126,6 @@ function main() {
   var tick = function() {
     currentAngle = animate(currentAngle);  // Update the rotation angle
     draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix);   // Draw the chime
-    //draw(gl, p, currentAngle, modelMatrix, u_ModelMatrix); //draw the rope
     requestAnimationFrame(tick, canvas);   // Request that the browser ?calls tick
   };
   tick();

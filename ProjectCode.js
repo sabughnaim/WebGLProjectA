@@ -82,7 +82,7 @@ var vertices = new Float32Array ([
     //with triangles primitives
     //front face XY
     0.25, -0.6, 0.1, 1,    0.0, 0.4, 0.4, //vertex that connects all triangles 
-    0.00, 0.00, 0.00,1,    0.0, 1.0, 0.2,
+    0.00, 0.00, 0.00,1,    0.0, 1.0, 0.2, 
     0.5, 0, 0, 1.00,       0.0, 1.0, 0.0,
 
     //YZ on the left 
@@ -96,8 +96,8 @@ var vertices = new Float32Array ([
     0.5, 0.0, 0.2, 1.00,    0.0, 1, 1.0, 
 
     //YZ on the right 
-    0.25, -0.6, 0.1, 1,     1.0, 0.0, 1.0,
-    0.5, 0.0, 0.2, 1.0,    0.0, 0.4, 0.1,
+    0.25, -0.6, 0.1, 1,     0.0, 0.2, 0.6,
+    0.5, 0.0, 0.2, 1.0,     0.0, 0.2, 0.6,
     0.5, 0.0, 0.0, 1.0,     0.0, 0.2, 0.6,
 
 
@@ -177,7 +177,7 @@ function main() {
 function initVertexBuffers(gl) {
 //==============================================================================
   
-  var n = 9;   // The number of vertices
+  var n = 12;   // The number of vertices
 
 //STRING BALANCING CHIME, NOT WORKING 
   
@@ -314,11 +314,14 @@ function draw(gl, n, p, currentAngle, modelMatrix, u_ModelMatrix) {
   
   //want to elongate this chime arm
 
-  modelMatrix.scale(1,0.4,1);       // Make new drawing axes that
+  //modelMatrix.scale(1,0.4,1);       // Make new drawing axes that
               // are smaller that the previous drawing axes by 0.6.
   modelMatrix.rotate(180, 90, 1, 0);  //makes the top hat upside down 
 
-  modelMatrix.rotate(1,1,currentAngle,0); //NOT WORKING 
+  modelMatrix.scale(1,Math.sin(currentAngle/20),1);
+  //this makes it bob up and down
+
+
 
    gl.drawArrays(gl.TRIANGLES, 0, n);
 
@@ -369,6 +372,7 @@ function draw(gl, n, p, currentAngle, modelMatrix, u_ModelMatrix) {
               // are smaller that the previous drawing axes by 0.6.
   modelMatrix.rotate(180, 90, 1, 0);  //makes the top hat upside down 
 
+
   modelMatrix.translate(-0.5, 0, 0);   //centers on bottom pyramid 
 
   // DRAW BOX: Use this matrix to transform & draw our VBO's contents:
@@ -388,16 +392,20 @@ function draw(gl, n, p, currentAngle, modelMatrix, u_ModelMatrix) {
   
   //want to elongate this chime arm
 
+ 
+  modelMatrix.rotate(180, 90, 1, 0);  //makes the top hat upside down 
+  modelMatrix.rotate(currentAngle, 1, 0, 1 ); 
+  //THIS MAKES IT JOINTED
+  
   modelMatrix.scale(1,0.2,1);       // Make new drawing axes that
               // are smaller that the previous drawing axes by 0.6.
-  modelMatrix.rotate(180, 90, 1, 0);  //makes the top hat upside down 
-  modelMatrix.rotate(1, 1, currentAngle, 0); //NOT WORKING
 
   modelMatrix.translate(-0.5, 0, 0);   //centers on bottom pyramid 
 
   // DRAW BOX: Use this matrix to transform & draw our VBO's contents:
 
   gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
+
   gl.drawArrays(gl.TRIANGLES, 0, n);
 
   pushMatrix(modelMatrix);
