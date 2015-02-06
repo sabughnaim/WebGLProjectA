@@ -95,7 +95,7 @@ var vertices = new Float32Array ([
     //YZ on the right 
     0.25, -0.6, 0.1, 1,     0.0, 0.2, 0.6,
     0.5, 0.0, 0.2, 1.0,     0.0, 0.2, 0.6,
-    0.5, 0.0, 0.0, 1.0,     0.0, 0.2, 0.6,
+    0.5, 0.0, 0.0, 1.0,     1, 1, 1,
 
 
 //JK DONT HAVE TO MAKE A FUCKIN TOP ONE BECAUSE I CAN ROTATE AND 
@@ -104,8 +104,8 @@ var vertices = new Float32Array ([
   ]);
 
   var rope = new Float32Array([ 
-      0.25, 0, 0.1, 1.0,   0, 1, 1,
-      0.25, -8, 0.1, 1.0,  0, 1, 1, 
+      0.25, 0, 0.1, 1.0,   1, 1, 1,
+      0.25, 1, 0.1, 1.0,   1, 1, 1, 
       
 
     ]);
@@ -148,6 +148,10 @@ function main() {
 
     // Clear <canvas>
   gl.clear(gl.COLOR_BUFFER_BIT);
+
+  window.addEventListener("keydown", myKeyDown, false);
+  window.addEventListener("keyup", myKeyUp, false);
+  window.addEventListener("keypress", myKeyPress, false);
 
   // Get storage location of u_ModelMatrix
   var u_ModelMatrix = gl.getUniformLocation(gl.program, 'u_ModelMatrix');
@@ -337,7 +341,8 @@ function draw(gl, n, p, currentAngle, modelMatrix, u_ModelMatrix) {
   modelMatrix.rotate(currentAngle*1.5, 1, currentAngle, 0);  // Make new drawing axes that
               // that spin around z axis (0,0,1) of the previous 
               // drawing axes, using the same origin.
-  modelMatrix.translate(-0.2, -0.4,0);            // Move box so that we pivot
+  modelMatrix.translate(-0.2, -0.9,0);  
+  modelMatrix.scale(0.5,0.4,1);          // Move box so that we pivot
             // around the MIDDLE of it's lower edge, and not the left corner.
 
   pushMatrix(modelMatrix);  
@@ -347,7 +352,7 @@ function draw(gl, n, p, currentAngle, modelMatrix, u_ModelMatrix) {
       // Draw the rectangle held in the VBO we created in initVertexBuffers().
   gl.drawArrays(gl.TRIANGLES, 0, n);
 
-  //gl.drawArrays(gl.LINES, 0, p);
+
 
 
   modelMatrix = popMatrix();  
@@ -375,7 +380,30 @@ function draw(gl, n, p, currentAngle, modelMatrix, u_ModelMatrix) {
   modelMatrix = popMatrix();
   //dont want to push, need new aves 
   //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+   modelMatrix.translate(0.5, 0, 0.2);       // Make new drawing axes that
+              // we moved upwards (+y) measured in prev. drawing axes, and
+              // moved rightwards (+x) by half the width of the box we just drew.
+  
+  //want to elongate this chime arm
+
  
+  modelMatrix.rotate(180, 90, 1, 0);  //makes the top hat upside down 
+  modelMatrix.rotate(currentAngle, 1, 0, 1 ); 
+  //THIS MAKES IT JOINTED
+  
+  //modelMatrix.scale(1.2,1,0.2);       // Make new drawing axes that
+              // are smaller that the previous drawing axes by 0.6.
+
+  modelMatrix.translate(-0.5, 0, 0);   //centers on bottom pyramid 
+
+  // DRAW BOX: Use this matrix to transform & draw our VBO's contents:
+
+  gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
+
+  gl.drawArrays(gl.TRIANGLES, 0, n);
+
+  pushMatrix(modelMatrix);
+  modelMatrix = popMatrix();
  //SECOND TOP PART
   modelMatrix.translate(0.5, 0, 0.2);       // Make new drawing axes that
               // we moved upwards (+y) measured in prev. drawing axes, and
@@ -417,27 +445,35 @@ function draw(gl, n, p, currentAngle, modelMatrix, u_ModelMatrix) {
   gl.vertexAttribPointer(a_Position, 4, gl.FLOAT, false, FSIZE * 7, 0); //stride bytes 
   gl.vertexAttribPointer(a_Color, 3, gl.FLOAT, false, FSIZE * 4, 0);
   
+  //==========================
 
-  modelMatrix.scale(0, Math.sin(currentAngle/20)/3, 0); 
-  modelMatrix.rotate(5, 1, 0, 0); 
+  //first string 
+
+  modelMatrix.scale(0, Math.sin(currentAngle/40)*3, 0); 
+  modelMatrix.rotate(currentAngle, 1, 1, 0); 
+
  // modelMatric.rotate()
-  gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
-      // Draw the rectangle held in the VBO we created in initVertexBuffers().
-
-  gl.drawArrays(gl.LINES, 0, 2);
-
-
-
   
-    //--------
-modelMatrix.translate(0, 7,0);
- modelMatrix.scale(0, -Math.sin(currentAngle/10), 0); 
-  modelMatrix.rotate(5, 1, 0, 0); 
- // modelMatric.rotate()
+  pushMatrix(modelMatrix);  
   gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
+  gl.drawArrays(gl.LINES, 0, 2);
+  modelMatrix = popMatrix();  
+
+  //------------------------------
+
+//second string 
+  modelMatrix.scale(0, -Math.sin(currentAngle/40), 0); 
+
+  //modelMatrix.rotate(currentAngle*0.1, 0, 1, 0); 
+  pushMatrix(modelMatrix);  
+  gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
+
+  modelMatrix = popMatrix();  
+    gl.drawArrays(gl.LINES, 0, 2);
+
       // Draw the rectangle held in the VBO we created in initVertexBuffers().
 
-  gl.drawArrays(gl.LINES, 0, 2);
+
 
 
 
@@ -505,4 +541,70 @@ function runStop() {
 //to print user instructions
 function showDiv() {
    document.getElementById('welcomeDiv').style.display = "block";
+}
+
+
+function myKeyDown(ev) {
+//===============================================================================
+// Called when user presses down ANY key on the keyboard, and captures the 
+// keyboard's scancode or keycode(varies for different countries and alphabets).
+//  CAUTION: You may wish to avoid 'keydown' and 'keyup' events: if you DON'T 
+// need to sense non-ASCII keys (arrow keys, function keys, pgUp, pgDn, Ins, 
+// Del, etc), then just use the 'keypress' event instead.
+//   The 'keypress' event captures the combined effects of alphanumeric keys and // the SHIFT, ALT, and CTRL modifiers.  It translates pressed keys into ordinary
+// ASCII codes; you'll get the ASCII code for uppercase 'S' if you hold shift 
+// and press the 's' key.
+// For a light, easy explanation of keyboard events in JavaScript,
+// see:    http://www.kirupa.com/html5/keyboard_events_in_javascript.htm
+// For a thorough explanation of the messy way JavaScript handles keyboard events
+// see:    http://javascript.info/tutorial/keyboard-events
+//
+
+  switch(ev.keyCode) {      // keycodes !=ASCII, but are very consistent for 
+  //  nearly all non-alphanumeric keys for nearly all keyboards in all countries.
+    case 37:    // left-arrow key
+      // print in console:
+      console.log(' left-arrow.');
+      // and print on webpage in the <div> element with id='Result':
+      document.getElementById('Result').innerHTML =
+        ' Left Arrow:keyCode='+ev.keyCode;
+      break;
+    case 38:    // up-arrow key
+      console.log('   up-arrow.');
+      document.getElementById('Result').innerHTML =
+        '   Up Arrow:keyCode='+ev.keyCode;
+      break;
+    case 39:    // right-arrow key
+      console.log('right-arrow.');
+      document.getElementById('Result').innerHTML =
+        'Right Arrow:keyCode='+ev.keyCode;
+      break;
+    case 40:    // down-arrow key
+      console.log(' down-arrow.');
+      document.getElementById('Result').innerHTML =
+        ' Down Arrow:keyCode='+ev.keyCode;
+      break;
+    default:
+      console.log('myKeyDown()--keycode=', ev.keyCode, ', charCode=', ev.charCode);
+      document.getElementById('Result').innerHTML =
+        'myKeyDown()--keyCode='+ev.keyCode;
+      break;
+  }
+}
+
+function myKeyUp(ev) {
+//===============================================================================
+// Called when user releases ANY key on the keyboard; captures scancodes well
+
+  console.log('myKeyUp()--keyCode='+ev.keyCode+' released.');
+}
+
+function myKeyPress(ev) {
+//===============================================================================
+// Best for capturing alphanumeric keys and key-combinations such as 
+// CTRL-C, alt-F, SHIFT-4, etc.
+  console.log('myKeyPress():keyCode='+ev.keyCode  +', charCode=' +ev.charCode+
+                        ', shift='    +ev.shiftKey + ', ctrl='    +ev.ctrlKey +
+                        ', altKey='   +ev.altKey   +
+                        ', metaKey(Command key or Windows key)='+ev.metaKey);
 }
