@@ -84,11 +84,11 @@ var vertices = new Float32Array ([
 
     //YZ on the left 
     0.25, -0.6, 0.1, 1,    0.0, 0.4, 0.0,
-    0, 0, 0.2, 1.00,          0.0, 0.5, 1.0,   //this second segment is the colors
+    0, 0, 0.2, 1.00,       0.0, 0.5, 1.0,   //this second segment is the colors
     0, 0.00, 0.00,1.00,    0.0, 0.7, 1.0,
 
     //back XY face
-    0.25, -0.6, 0.1, 1,    1.0, 0.4, 0.0,
+    0.25, -0.6, 0.1, 1,     1.0, 0.4, 0.0,
     0, 0, 0.2, 1.00,        0.0, 0.2, 0.9, 
     0.5, 0.0, 0.2, 1.00,    0.0, 1, 1.0, 
 
@@ -364,7 +364,7 @@ function draw(gl, n, p, currentAngle, modelMatrix, u_ModelMatrix) {
   
   //want to elongate this chime arm
 
-  modelMatrix.scale(1,0.6,1);       // Make new drawing axes that
+  modelMatrix.scale(1,0.6,currentAngle/70);       // Make new drawing axes that
               // are smaller that the previous drawing axes by 0.6.
   modelMatrix.rotate(180, 90, 1, 0);  //makes the top hat upside down 
 
@@ -378,7 +378,7 @@ function draw(gl, n, p, currentAngle, modelMatrix, u_ModelMatrix) {
 
 
   modelMatrix = popMatrix();
-  //dont want to push, need new aves 
+  //dont want to push, need new axes 
   //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
    modelMatrix.translate(0.5, 0, 0.2);       // Make new drawing axes that
               // we moved upwards (+y) measured in prev. drawing axes, and
@@ -395,6 +395,8 @@ function draw(gl, n, p, currentAngle, modelMatrix, u_ModelMatrix) {
               // are smaller that the previous drawing axes by 0.6.
 
   modelMatrix.translate(-0.5, 0, 0);   //centers on bottom pyramid 
+  modelMatrix.scale(1,0.6,1); 
+
 
   // DRAW BOX: Use this matrix to transform & draw our VBO's contents:
 
@@ -412,11 +414,11 @@ function draw(gl, n, p, currentAngle, modelMatrix, u_ModelMatrix) {
   //want to elongate this chime arm
 
  
-  modelMatrix.rotate(180, 90, 1, 0);  //makes the top hat upside down 
+  modelMatrix.rotate(0, 0, 1, 0);  //makes the top hat upside down 
   modelMatrix.rotate(currentAngle, 1, 0, 1 ); 
-  //THIS MAKES IT JOINTED
+  //THIS MAKES IT JOINTED, SECOND PART 
   
-  modelMatrix.scale(1,0.2,1);       // Make new drawing axes that
+  modelMatrix.scale(1,0.25,1);       // Make new drawing axes that
               // are smaller that the previous drawing axes by 0.6.
 
   modelMatrix.translate(-0.5, 0, 0);   //centers on bottom pyramid 
